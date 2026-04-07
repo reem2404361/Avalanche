@@ -64,7 +64,7 @@ body{
 
   transition: transform .12s ease, background .3s, box-shadow .3s;
 
-  /* ☀️ glow effect */
+  
   box-shadow: 0 0 10px var(--cglow),
               0 0 20px var(--cglow);
 }
