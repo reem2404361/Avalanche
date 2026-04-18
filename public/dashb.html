@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashb.css">
+    <title>Avalanche | Dashboard</title>
+</head>
+<body>
+    <div id="cursor"></div><div id="cursor-ring"></div>
+
+    <aside class="sidebar">
+        <div class="logo"><h2>AVALANCHE</h2></div>
+        <nav>
+            <a href="dashb.html" class="active">Main Dashboard</a>
+            <a href="#">Installations</a>
+            <a href="#">Insights</a>
+            <a href="#">Settings</a>
+        </nav>
+        <button class="main-btn" style="margin-top: auto;" onclick="location.href='scheduler.html'">Schedule Audit</button>
+    </aside>
+
+    <main class="content">
+        <header class="top-bar">
+            <h3 style="font-weight: 900;">SYSTEM CONTROL</h3>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div id="p-circle" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--cursor); background:#eee;">
+                    <img id="p-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <button onclick="document.getElementById('p-up').click()" style="font-size: 9px; font-weight: 900; background: var(--cursor); border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">UPLOAD</button>
+                    <button onclick="deletePhoto()" style="font-size: 9px; font-weight: 900; background: #ff4d4d; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">DELETE</button>
+                </div>
+                <input type="file" id="p-up" hidden onchange="loadPhoto(event)">
+            </div>
+        </header>
+
+        <div class="sub-nav-bar">
+            <a href="#region-section">REGION MAP</a>
+            <a href="#reviews-section">VERIFIED REVIEWS</a>
+            <a href="#history-section">CUSTOMER HISTORY</a>
+        </div>
+
+        <div style="padding: 2.5rem 3rem;">
+            <section class="metrics-grid">
+                <div class="m-card"><p>Total Revenue</p><h3>EGP 2.4M</h3></div>
+                <div class="m-card"><p>Capacity</p><h3>840 kWp</h3></div>
+                <div class="m-card"><p>Active Nodes</p><h3>1,124</h3></div>
+            </section>
+
+            <section id="region-section" class="map-card">
+                <div style="position:relative; text-align:center;">
+                    <img src="pic/map.png" style="max-width:100%;">
+                    <div class="map-dot" style="top:22%; left:48%;"></div>
+                    <div class="map-dot" style="top:65%; left:58%;"></div>
+                </div>
+            </section>
+
+            <h3 style="font-weight:900; margin-bottom:25px;">Customer Feedback</h3>
+            <section id="reviews-section" class="reviews-grid">
+                <div class="glass-card review-card" style="border-top: 5px solid #FFB703;">
+                    <div class="stars">★★★★★</div>
+                    <p>"Best solar ROI in Cairo."</p>
+                    <strong>- Ahmed M.</strong>
+                </div>
+                <div class="glass-card review-card" style="border-top: 5px solid #3E5C76;">
+                    <div class="stars">★★★★★</div>
+                    <p>"Seamless installation process."</p>
+                    <strong>- Sarah H.</strong>
+                </div>
+                <div class="glass-card review-card" style="border-top: 5px solid #748CAB;">
+                    <div class="stars">★★★★★</div>
+                    <p>"World-class support team."</p>
+                    <strong>- Khaled W.</strong>
+                </div>
+            </section>
+
+            <section id="history-section" class="glass-card table-container">
+                <h3 style="font-weight:900; margin-bottom:25px;">Operational History</h3>
+                <table class="activity-table">
+                    <thead>
+                        <tr>
+                            <th>CUSTOMER</th><th>LOCATION</th><th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="anim-row">
+                            <td>Mohamed Ali</td><td>New Cairo</td><td><span class="status-active">ACTIVE</span></td>
+                        </tr>
+                        <tr class="anim-row">
+                            <td>Yasmine Fawzy</td><td>Maadi</td><td><span class="status-active">ACTIVE</span></td>
+                        </tr>
+                        <tr class="anim-row">
+                            <td>Tarek Nour</td><td>October 6</td><td><span class="status-pending">PENDING</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <footer class="bottom-bar">
+            <p>© 2026 Avalanche Solar Systems</p>
+            <p>Cairo, Egypt | 19XXX</p>
+        </footer>
+    </main>
+
+    <script src="js/dashb.js"></script>
+    <script>
+        function loadPhoto(event) {
+            const output = document.getElementById('p-img');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.style.display = 'block';
+        }
+        function deletePhoto() {
+            const output = document.getElementById('p-img');
+            output.src = "";
+            output.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

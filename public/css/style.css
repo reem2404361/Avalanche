@@ -1,111 +1,51 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800;900&display=swap');
 
-html, body {
-    height: 100%;
-}
-
-
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
-    --font-main:'Manrope', sans-serif;
-    --background:#EDF2F4; 
-    --primary:#0D1321;
-    --secondary:#1D2D44;
-    --surface:#3E5C76;
-    --accent:#748CAB;
-    --cursor:#FFB703;
-    --cglow:#f6ba67;
-    --textlight:#EDF2F4;
-    --textdark:#0D1321;
+    --font-main: 'Manrope', sans-serif;
+    --background: #EDF2F4; 
+    --primary: #0D1321;
+    --secondary: #1D2D44;
+    --surface: #3E5C76;
+    --accent: #748CAB;
+    --cursor: #FFB703;
+    --cglow: #f6ba67;
 }
 
-body{
-    font-family:var(--font-main);
-    letter-spacing: -0.01em;
-    -webkit-font-smoothing: antialiased;
+body { font-family: var(--font-main); background: var(--background); display: flex; overflow-x: hidden; }
 
-    background:var(--background);
-    
-    line-height: 1.5;
+/* Global Sidebar */
+.sidebar { 
+    width: 260px; background: var(--primary); height: 100vh; position: fixed; 
+    padding: 2.5rem; display: flex; flex-direction: column; z-index: 1000; 
+}
+.sidebar .logo h2 { color: var(--cursor); font-weight: 900; margin-bottom: 2rem; letter-spacing: -1px; }
+.sidebar nav a { 
+    color: var(--accent); text-decoration: none; padding: 1rem; display: block; 
+    border-radius: 8px; transition: 0.3s; font-weight: 600; margin-bottom: 5px;
+}
+.sidebar nav a.active, .sidebar nav a:hover { background: var(--secondary); color: white; }
 
-    color: var(--textdark);
+/* Layout Structure */
+.content { flex: 1; margin-left: 260px; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+
+/* Bars */
+.top-bar { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 1.5rem 3rem; background: white; border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.bottom-bar { 
+    background: var(--primary); color: white; padding: 3rem; margin-top: auto; 
+    display: flex; justify-content: space-between; align-items: center;
 }
 
-.btn{
-    background:var(--primary);
-    color:var(--textlight);
-    padding: 0.5em 1.5em;
-    border-radius: 0.25em;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
-
+/* UI Elements */
+.main-btn { 
+    background: var(--cursor); color: var(--primary); border: none; padding: 1.2rem; 
+    border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.3s; 
 }
+.main-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,183,3,0.3); }
 
- .btn:hover {
-  background: var(--secondary);
-  box-shadow: 0 0 20px var(--accent);
-  transform: translateY(-2px);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-
-.card{
-    border-radius: 0.45em;
-}
-
-
-img, video, svg {
-  display: block;
-  max-width: 100%;
-}
-
-#cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-
-  width: 12px;
-  height: 12px;
-
-  background: var(--cursor); /* sunlight color */
-  border-radius: 50%;
-
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-
-  transition: transform .12s ease, background .3s, box-shadow .3s;
-
-  
-  box-shadow: 0 0 10px var(--cglow),
-              0 0 20px var(--cglow);
-}
-
-
-#cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9998;
-
-  width: 36px;
-  height: 36px;
-
-  border: 1.5px solid var(--cursor); /* softer blue */
-  border-radius: 50%;
-
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-
-  transition: transform .35s cubic-bezier(.25,.46,.45,.94),
-              border-color .3s,
-              opacity .3s;
-
-  opacity: .5;
-}
-
+/* Custom Sun Cursor */
+#cursor { position: fixed; width: 10px; height: 10px; background: var(--cursor); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); box-shadow: 0 0 10px var(--cglow); }
+#cursor-ring { position: fixed; width: 35px; height: 35px; border: 2px solid var(--cursor); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: 0.1s cubic-bezier(0.23, 1, 0.32, 1); opacity: 0.6; }
