@@ -81,7 +81,7 @@ body{
   flex: 0.8;
   height: 100vh;
   background: linear-gradient(rgba(13, 19, 33, 0.7), rgba(29, 45, 68, 0.7)),
-    url('Avalanche/public/images/signup.jpg') no-repeat center/cover;
+    url('signup.jpg') no-repeat center/cover;
   
   position: relative;
   color:var(--textlight);
