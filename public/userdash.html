@@ -6,98 +6,9 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="user.css" />
+    <link rel="stylesheet" href="css/userdash.css" />
     <title>Avalanche</title>
 
-    <style>
-      * {
-        cursor: none !important;
-        margin: 0;
-        padding: 0; 
-        box-sizing: border-box;
-      }
-      :root {
-        --font-main: "Manrope", sans-serif;
-        --background: #edf2f4;
-        --primary: #0d1321;
-        --secondary: #1d2d44;
-        --surface: #3e5c76;
-        --accent: #748cab;
-        --cursor: #ffb703;
-        --cglow: #f6ba67;
-        --textlight: #edf2f4;
-        --textdark: #0d1321;
-      }
-
-      body {
-        font-family: var(--font-main);
-        letter-spacing: -0.01em;
-        -webkit-font-smoothing: antialiased;
-
-        background: var(--background);
-      }
-
-      .btn {
-        background: var(--primary);
-        color: var(--textlight);
-        padding: 0.5em 1.5em;
-        border-radius: 0.25em;
-        border: none;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-
-      .btn:hover {
-        background: var(--secondary);
-        box-shadow: 0 0 20px var(--accent);
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-      }
-
-      .card {
-        border-radius: 0.45em;
-      }
-
-      #cursor {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 9999;
-
-        width: 12px;
-        height: 12px;
-
-        background: var(--cursor); /* sunlight color */
-        border-radius: 50%;
-
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-
-        transition: transform 0.12s ease, background 0.3s, box-shadow 0.3s;
-
-        box-shadow: 0 0 10px var(--cglow), 0 0 20px var(--cglow);
-      }
-
-      #cursor-ring {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 9998;
-
-        width: 36px;
-        height: 36px;
-
-        border: 1.5px solid var(--cursor); /* softer blue */
-        border-radius: 50%;
-
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-
-        transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-          border-color 0.3s, opacity 0.3s;
-
-        opacity: 0.5;
-      }
-    </style>
     </head>
     <body>
     <div id="cursor"></div>
@@ -336,7 +247,7 @@
   </div>
 
   <div class="image-card">
-  <img src="userdash.jpg" alt="Solar panels"/>
+  <img src="images/userdash.jpg" alt="Solar panels"/>
   <div class="image-overlay"></div>
   <div class="image-text">
     <h3>Sustainable Living</h3>
@@ -348,6 +259,6 @@
  </div>
 
 
-    <script src="user.js"></script>
+    <script src="js/userdash.js"></script>
     </body>
     </html>

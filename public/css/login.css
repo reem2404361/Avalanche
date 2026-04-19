@@ -1,10 +1,84 @@
+
+* { 
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+cursor:none !important;
+}
+
+ :root {
+    --font-main:'Manrope', sans-serif;
+    --background:#EDF2F4; 
+    --primary:#0D1321;
+    --secondary:#1D2D44;
+    --surface:#3E5C76;
+    --accent:#748CAB;
+    --cursor:#FFB703;
+    --cglow:#f6ba67;
+    --textlight:#EDF2F4;
+    --textdark:#0D1321;
+
+
+
+}
+
+
 body {
+   font-family:var(--font-main);
+   letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background: radial-gradient(circle at center, #3e5c76, #1d2d44,#1D2D44);
 
+}
+
+
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+
+  width: 12px;
+  height: 12px;
+
+  background: var(--cursor); 
+  border-radius: 50%;
+
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+
+  transition: transform .12s ease, background .3s, box-shadow .3s;
+
+  
+  box-shadow: 0 0 10px var(--cglow),
+              0 0 20px var(--cglow);
+}
+
+
+#cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9998;
+
+  width: 36px;
+  height: 36px;
+
+  border: 1.5px solid var(--cursor); 
+  border-radius: 50%;
+
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+
+  transition: transform .35s cubic-bezier(.25,.46,.45,.94),
+              border-color .3s,
+              opacity .3s;
+
+  opacity: .5;
 }
 
 .container {
