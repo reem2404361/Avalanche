@@ -1,0 +1,82 @@
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  margin: 0;
+  height: 50px;
+  background-color: var(--background);
+  box-shadow: 0 0 20px var(--accent);
+}
+
+.nav-left {
+  font-size: 1.5rem;
+  margin: 0;
+  line-height: 1;
+  padding: 0;
+  display: inline-block;
+  font-weight: 900;
+  background: linear-gradient(45deg, #1d2d44, #3e5c76, #748cab, #edf2f4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-center {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+}
+
+.nav-center a {
+  text-decoration: none;
+  margin: 0;
+  line-height: 1;
+  color: var(--secondary);
+  font-weight: 600;
+  position: relative;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-center a:hover {
+  color: var(--surface);
+  transform: translateY(-1px);
+}
+.nav-center a:hover::after {
+  width: 100%;
+}
+/* REMOVE UNDERLINE */
+.nav-center a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background-color: var(--surface);
+  transition: width 0.3s ease;
+}
+
+.nav-right {
+  display: flex;
+  margin: 0;
+  gap: 0.8rem;
+}
+
+.nav-right a.btn {
+  line-height: 1;
+  margin: 0;
+  padding: 0.35em 0.9em;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  background: var(--primary);
+  color: var(--textlight);
+  font-weight: 600;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.nav-right a.btn:hover {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  transform: translateY(-1px);
+}
