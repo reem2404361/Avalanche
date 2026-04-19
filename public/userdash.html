@@ -1,0 +1,353 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="user.css" />
+    <title>Avalanche</title>
+
+    <style>
+      * {
+        cursor: none !important;
+        margin: 0;
+        padding: 0; 
+        box-sizing: border-box;
+      }
+      :root {
+        --font-main: "Manrope", sans-serif;
+        --background: #edf2f4;
+        --primary: #0d1321;
+        --secondary: #1d2d44;
+        --surface: #3e5c76;
+        --accent: #748cab;
+        --cursor: #ffb703;
+        --cglow: #f6ba67;
+        --textlight: #edf2f4;
+        --textdark: #0d1321;
+      }
+
+      body {
+        font-family: var(--font-main);
+        letter-spacing: -0.01em;
+        -webkit-font-smoothing: antialiased;
+
+        background: var(--background);
+      }
+
+      .btn {
+        background: var(--primary);
+        color: var(--textlight);
+        padding: 0.5em 1.5em;
+        border-radius: 0.25em;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .btn:hover {
+        background: var(--secondary);
+        box-shadow: 0 0 20px var(--accent);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+      }
+
+      .card {
+        border-radius: 0.45em;
+      }
+
+      #cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+
+        width: 12px;
+        height: 12px;
+
+        background: var(--cursor); /* sunlight color */
+        border-radius: 50%;
+
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+
+        transition: transform 0.12s ease, background 0.3s, box-shadow 0.3s;
+
+        box-shadow: 0 0 10px var(--cglow), 0 0 20px var(--cglow);
+      }
+
+      #cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+
+        width: 36px;
+        height: 36px;
+
+        border: 1.5px solid var(--cursor); /* softer blue */
+        border-radius: 50%;
+
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+
+        transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+          border-color 0.3s, opacity 0.3s;
+
+        opacity: 0.5;
+      }
+    </style>
+    </head>
+    <body>
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+
+    <div class="container">
+    <aside class="user-sidebar">
+      <div class="sidebar-header">
+        <div class="toggle-row">
+        <h2>Avalanche</h2>
+      <button class="toggle-btn" id="toggle-btn"><svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            stroke="currentColor"
+            stroke-width="2"
+            fill="none"
+          >
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+          </svg></button></div>
+        <p>User Control Panel</p>
+
+      </div>
+
+      <ul>
+        <li>
+          <button class="side-btn dashboard" id="current">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="9"></rect>
+              <rect x="14" y="3" width="7" height="5"></rect>
+              <rect x="14" y="11" width="7" height="9"></rect>
+              <rect x="3" y="15" width="7" height="5"></rect>
+            </svg>
+            <span class="side-btn-text">Dashboard</span>
+          </button>
+        </li>
+
+        <li>
+          <button class="side-btn orders">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+            <span class="side-btn-text">Order History</span>
+          </button>
+        </li>
+
+        
+
+           <li>
+                <button class="side-btn catalog">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                    </svg>
+                    <span class="side-btn-text">Catalog</span>
+                </button>
+            </li>
+
+        <li>
+          <button class="side-btn appointments">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+            <span class="side-btn-text">Schedule</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="side-bottom">
+        <hr/>
+        <button class="side-btn logout">
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            stroke="currentColor"
+            stroke-width="2"
+            fill="none"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span class="side-btn-text">Log Out</span>
+        </button>
+      </div>
+    </aside>
+    
+        <div class="main-content">
+          <h1>Your sustainable journey is
+          taking shape.
+          </h1>
+
+                      <div class="cards">
+            <div class="status-card">
+              <div class="status-header">
+              <svg width="24" height="24" viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M300 462.4h424.8v48H300v-48zM300 673.6H560v48H300v-48z" fill="currentcolor" /><path d="M818.4 981.6H205.6c-12.8 0-24.8-2.4-36.8-7.2-11.2-4.8-21.6-11.2-29.6-20-8.8-8.8-15.2-18.4-20-29.6-4.8-12-7.2-24-7.2-36.8V250.4c0-12.8 2.4-24.8 7.2-36.8 4.8-11.2 11.2-21.6 20-29.6 8.8-8.8 18.4-15.2 29.6-20 12-4.8 24-7.2 36.8-7.2h92.8v47.2H205.6c-25.6 0-47.2 20.8-47.2 47.2v637.6c0 25.6 20.8 47.2 47.2 47.2h612c25.6 0 47.2-20.8 47.2-47.2V250.4c0-25.6-20.8-47.2-47.2-47.2H725.6v-47.2h92.8c12.8 0 24.8 2.4 36.8 7.2 11.2 4.8 21.6 11.2 29.6 20 8.8 8.8 15.2 18.4 20 29.6 4.8 12 7.2 24 7.2 36.8v637.6c0 12.8-2.4 24.8-7.2 36.8-4.8 11.2-11.2 21.6-20 29.6-8.8 8.8-18.4 15.2-29.6 20-12 5.6-24 8-36.8 8z" fill="" /><path d="M747.2 297.6H276.8V144c0-32.8 26.4-59.2 59.2-59.2h60.8c21.6-43.2 66.4-71.2 116-71.2 49.6 0 94.4 28 116 71.2h60.8c32.8 0 59.2 26.4 59.2 59.2l-1.6 153.6z m-423.2-47.2h376.8V144c0-6.4-5.6-12-12-12H595.2l-5.6-16c-11.2-32.8-42.4-55.2-77.6-55.2-35.2 0-66.4 22.4-77.6 55.2l-5.6 16H335.2c-6.4 0-12 5.6-12 12v106.4z" fill="" />
+              </svg>
+                <span id="badge">IN PROGRESS</span>
+                </div>
+                <p>Current Order Status</p>
+                <h2>Scheduling</h2>
+            </div>
+
+            <div class="schedule-card">
+              <svg width="24" height="24" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="3" stroke="#000000" fill="none"><path d="M36.66,54.45H8.84A2.5,2.5,0,0,1,6.35,52V12.12A2.49,2.49,0,0,1,8.84,9.63H48.68a2.49,2.49,0,0,1,2.49,2.49v22.4"/><line x1="6.35" y1="20.63" x2="51.17" y2="20.63"/><line x1="16.46" y1="9.63" x2="16.46" y2="4.63"/><line x1="40.42" y1="9.63" x2="40.42" y2="4.63"/><circle cx="45.22" cy="45.44" r="12.43"/><polyline points="45.22 36.7 45.22 45.82 49.57 49.16"/>
+              </svg>
+                <p>Scheduled Installation</p>
+                <h2>Sep 13,2026</h2>
+            </div>
+
+
+            <div class="savings-card">
+              <svg width="24" height="24" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="3" stroke="#000000" fill="none"><path d="M15.68,52.27,8.27,41.12a1.2,1.2,0,0,1,.34-1.67l4.68-3a1.21,1.21,0,0,1,1.64.32l7.56,11a1.2,1.2,0,0,1-.32,1.67L17.35,52.6A1.2,1.2,0,0,1,15.68,52.27Z" stroke-linecap="round"/><path d="M15.76,37.9l7.8-4.9a2.17,2.17,0,0,1,1.7-.27c2.77.71,11.1,3,14.17,4.08,2.31.81,3.24,3.09,2.31,4.59-1.26,2-3.18,1.81-4.56,1.42l-.55-.2-5.46-2.33" stroke-linecap="round"/><path d="M21.81,46.75l2.55-1.46,14.43,4a1.06,1.06,0,0,0,.88-.14c2-1.3,10.71-7.06,15-10.09a2.4,2.4,0,0,0,.3-4,3.1,3.1,0,0,0-3.71-.33c-1.5.84-5.67,3.94-5.67,3.94" stroke-linecap="round"/><path d="M44.12,14.44a6,6,0,0,0-5.6-3.61c-5.05,0-5.24,3.61-5.24,3.61s-.76,4.46,5.42,4.93c6.43.49,5.42,4.93,5.42,4.93s-.65,3.86-5.42,4.1-6.24-4.76-6.24-4.76"/><line x1="38.52" y1="7.62" x2="38.52" y2="32.1"/>
+              </svg>
+                <p>Est. Annual Savings</p>
+                <h2>18,500 EGP</h2>
+            </div>
+       </div>
+
+ <div class="progress-card">
+  <div class="progress-header">
+   <h3>Installation Progress</h3>
+   <span>3 of 5 steps completed</span>
+  </div>
+
+  <div class="stepper">
+    <div class="track-bg"></div>
+    <div class="track-fill"></div>
+
+    <div class="step">
+      <div class="node done"><svg fill="currentColor" width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .cls-1 {
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path id="checkmark" class="cls-1" d="M1224,312a12,12,0,1,1,3.32-23.526l-1.08,1.788A10,10,0,1,0,1234,300a9.818,9.818,0,0,0-.59-3.353l1.27-2.108A11.992,11.992,0,0,1,1224,312Zm0.92-8.631a0.925,0.925,0,0,1-.22.355,0.889,0.889,0,0,1-.72.259,0.913,0.913,0,0,1-.94-0.655l-3.82-3.818a0.9,0.9,0,0,1,1.27-1.271l3.25,3.251,7.39-10.974a1,1,0,0,1,1.38-.385,1.051,1.051,0,0,1,.36,1.417Z" transform="translate(-1212 -288)"/>
+</svg></div>
+      <span class="step-label done">Order<br>Placed</span>
+    </div>
+
+    <div class="step">
+      <div class="node done"><svg fill="currentColor" width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .cls-1 {
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path id="checkmark" class="cls-1" d="M1224,312a12,12,0,1,1,3.32-23.526l-1.08,1.788A10,10,0,1,0,1234,300a9.818,9.818,0,0,0-.59-3.353l1.27-2.108A11.992,11.992,0,0,1,1224,312Zm0.92-8.631a0.925,0.925,0,0,1-.22.355,0.889,0.889,0,0,1-.72.259,0.913,0.913,0,0,1-.94-0.655l-3.82-3.818a0.9,0.9,0,0,1,1.27-1.271l3.25,3.251,7.39-10.974a1,1,0,0,1,1.38-.385,1.051,1.051,0,0,1,.36,1.417Z" transform="translate(-1212 -288)"/>
+</svg></div>
+      <span class="step-label done">Assessment</span>
+    </div>
+
+    <div class="step">
+      <div class="node active"><svg fill="currentColor" width="18" height="18" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"><path d="M15.09814,12.63379,13,11.42285V7a1,1,0,0,0-2,0v5a.99985.99985,0,0,0,.5.86621l2.59814,1.5a1.00016,1.00016,0,1,0,1-1.73242ZM12,2A10,10,0,1,0,22,12,10.01114,10.01114,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8.00917,8.00917,0,0,1,12,20Z"/></svg>
+      </div>
+      <span class="step-label active">Scheduling</span>
+    </div>
+
+    <div class="step">
+      <div class="node pending"><svg fill="currentColor" width="18" height="18" viewBox="0 0 32 32" id="OBJECT" xmlns="http://www.w3.org/2000/svg"><title/><path d="M26,25H19.77V23h-2v2h-4V23h-2v2H6a1,1,0,0,0,0,2H26a1,1,0,0,0,0-2Z"/><polygon points="20.5 15 19.43 11 12.57 11 11.5 15 20.5 15"/><polygon points="10.5 11 3.53 11 2.39 15 9.43 15 10.5 11"/><polygon points="22.57 15 29.61 15 28.47 11 21.5 11 22.57 15"/><polygon points="10.96 17 9.89 21 22.11 21 21.04 17 10.96 17"/><polygon points="17.82 5 14.18 5 13.11 9 18.89 9 17.82 5"/><path d="M31,19.73,30.18,17H23.11l1.07,4H30a1,1,0,0,0,.8-.4A1,1,0,0,0,31,19.73Z"/><path d="M27.9,9,27,5.73A1,1,0,0,0,26,5H19.89L21,9Z"/><path d="M8.89,17H1.82L1,19.73a1,1,0,0,0,.16.87A1,1,0,0,0,2,21H7.82Z"/><path d="M12.11,5H6a1,1,0,0,0-1,.73L4.1,9H11Z"/></svg>
+      </div>
+      <span class="step-label pending">Installation</span>
+    </div>
+
+    <div class="step">
+      <div class="node pending"><svg fill="currentColor" width="18" height="18" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M595.344 64.72h.176-.176zm0 0l-72.207 379.377 261.584.88L428.657 959.28l72.208-417.376-261.568-.912zm.049-63.999c-1.728 0-3.455.063-5.151.19-11.296.913-18.785 4.689-27.664 10.657a64.304 64.304 0 0 0-13.392 11.936 56.688 56.688 0 0 0-3.297 4.288L187.281 502.4c-14.16 19.408-16.24 45.025-5.36 66.433 10.864 21.408 32.832 34.976 56.912 35.152l184.736 1.344-58.08 342.192c-5.52 29.408 10.16 58.72 37.76 70.528a64.19 64.19 0 0 0 25.391 5.216c20.112 0 36.64-9.408 49.041-26.4L836.737 482.56c14.16-19.409 16.225-45.057 5.36-66.433-10.864-21.408-32.832-34.977-56.912-35.152l-184.736-.32 57.456-300.88a62.46 62.46 0 0 0 1.825-15.056c0-34.624-27.569-62.848-62.065-63.968-.767-.032-1.52-.032-2.271-.032z"/></svg>
+      </div>
+      <span class="step-label pending">Activation</span>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-section">
+  <div class="left">
+  <div class="left-intro">
+    <h1>Quick Actions</h1>
+    <p>Manage your installation and get support from your project team.</p>
+  </div>
+
+  <div class="left-cards">
+  <div class="calc-card" onclick="window.location.href='calculate.html'">
+  <svg fill="currentColor" width="18" height="18" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
+  <path d="M200,20.00781H56a20.02292,20.02292,0,0,0-20,20v176a20.02292,20.02292,0,0,0,20,20H200a20.02292,20.02292,0,0,0,20-20v-176A20.02292,20.02292,0,0,0,200,20.00781Zm-4,192H60v-168H196ZM80,76A12,12,0,0,1,92,64h72a12,12,0,0,1,0,24H92A12,12,0,0,1,80,76Zm88,52a16,16,0,1,1-16-16A16.01833,16.01833,0,0,1,168,128Zm0,48a16,16,0,1,1-16-16A16.01833,16.01833,0,0,1,168,176Zm-48-48a16,16,0,1,1-16-16A16.01833,16.01833,0,0,1,120,128Zm0,48a16,16,0,1,1-16-16A16.01833,16.01833,0,0,1,120,176Z"/>
+</svg>
+  <h3>Calculate your savings</h3>
+  <div class="action-arrow"><svg height="18" width="18" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve">
+<path fill="currentColor" d="M15.563,40.836c0.195,0.195,0.451,0.293,0.707,0.293s0.512-0.098,0.707-0.293l15-15
+	c0.391-0.391,0.391-1.023,0-1.414l-15-15c-0.391-0.391-1.023-0.391-1.414,0s-0.391,1.023,0,1.414l14.293,14.293L15.563,39.422
+	C15.172,39.813,15.172,40.446,15.563,40.836z"/>
+</svg></div>
+</div>
+
+  <div class="cs-card">
+    <svg fill="currentColor" height="18" width="18" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 32 32" xml:space="preserve">
+<path d="M16,2C9.4,2,4,7.4,4,14v3c0,2.8,2.2,5,5,5c0.6,0,1-0.4,1-1v-8c0-0.6-0.4-1-1-1c-1.1,0-2.1,0.4-2.9,1c0.5-5,4.8-9,9.9-9
+	s9.4,3.9,9.9,9c-0.8-0.6-1.8-1-2.9-1c-0.6,0-1,0.4-1,1v8c0,0.6,0.4,1,1,1c0.6,0,1.3-0.1,1.8-0.4c-1.1,2-2.8,3.6-4.9,4.5
+	c-0.2-1.2-1.2-2.2-2.5-2.2c-1.3,0-2.4,1.1-2.4,2.4c0,0.7,0.3,1.4,0.9,1.9c0.5,0.4,1,0.6,1.6,0.6c0.1,0,0.3,0,0.4,0
+	C23.6,28,28,22.9,28,17v-3C28,7.4,22.6,2,16,2z"/>
+</svg>
+  <h3>Contact Support</h3>
+  <div class="action-arrow">
+    <svg height="18" width="18" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve">
+    <path fill="currentColor" d="M15.563,40.836c0.195,0.195,0.451,0.293,0.707,0.293s0.512-0.098,0.707-0.293l15-15
+	c0.391-0.391,0.391-1.023,0-1.414l-15-15c-0.391-0.391-1.023-0.391-1.414,0s-0.391,1.023,0,1.414l14.293,14.293L15.563,39.422
+	C15.172,39.813,15.172,40.446,15.563,40.836z"/>
+  </svg>
+  </div>
+</div>
+</div>
+      
+  </div>
+
+  <div class="image-card">
+  <img src="userdash.jpg" alt="Solar panels"/>
+  <div class="image-overlay"></div>
+  <div class="image-text">
+    <h3>Sustainable Living</h3>
+    <p>Your system will reduce carbon emissions by approximately 4.2 tons annually.</p>
+  </div>
+</div>
+</div>
+
+ </div>
+
+
+    <script src="user.js"></script>
+    </body>
+    </html>
