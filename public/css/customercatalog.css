@@ -163,7 +163,7 @@
 
         .side-btn:hover .side-btn-text,
         .side-btn:hover svg {
-            color: var(--primary);
+            color: var(--textlight);
             stroke: var(--primary);
         }
 
@@ -183,7 +183,7 @@
 
         #current,
         #current:hover {
-            background: rgba(13, 19, 33, 0.12);
+            background: rgba(187, 188, 190, 0.12);
             border-right: 3px solid var(--primary);
             transform: none;
         }
