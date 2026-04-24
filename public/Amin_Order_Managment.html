@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Management</title>
-    <link rel="stylesheet" href="css/Admin_Order_Managment.css">
+    <link rel="stylesheet" href="css/Admin_Order_Managment.css" />
   </head>
   <body>
     <div id="cursor"></div>
     <div id="cursor-ring"></div>
 
-    <!-- ========== SIDEBAR ========== -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar">
       <div class="sidebar-header">
         <h2 class="sidebar-header-text">Admin Console</h2>
@@ -31,7 +31,10 @@
 
       <ul>
         <li>
-          <button class="side-btn dashboard" onclick="location.href='dashb.html'">
+          <button
+            class="side-btn dashboard"
+            onclick="location.href = 'dashb.html'"
+          >
             <svg
               width="24"
               height="24"
@@ -52,7 +55,11 @@
         </li>
 
         <li>
-          <button class="side-btn orders" id="current" onclick="location.href='Amin_Order_Managment.html'">
+          <button
+            class="side-btn orders"
+            id="current"
+            onclick="location.href = 'Amin_Order_Managment.html'"
+          >
             <svg
               width="24"
               height="24"
@@ -74,7 +81,10 @@
         </li>
 
         <li>
-          <button class="side-btn catalog"  onclick="location.href='admincatalog.html'">
+          <button
+            class="side-btn catalog"
+            onclick="location.href = 'admincatalog.html'"
+          >
             <svg
               width="24"
               height="24"
@@ -95,7 +105,10 @@
         </li>
 
         <li>
-          <button class="side-btn appointments" onclick="location.href='Admin_calendar.html'">
+          <button
+            class="side-btn appointments"
+            onclick="location.href = 'Admin_calendar.html'"
+          >
             <svg
               viewBox="0 0 24 24"
               width="24"
@@ -116,7 +129,10 @@
 
       <div class="side-bottom">
         <hr />
-        <button class="side-btn logout" onclick="location.href=' Logout.html'">
+        <button
+          class="side-btn logout"
+          onclick="location.href = ' Logout.html'"
+        >
           <svg
             viewBox="0 0 24 24"
             width="24"
@@ -134,7 +150,7 @@
       </div>
     </aside>
 
-    <!-- ========== MAIN CONTENT ========== -->
+    <!-- MAIN CONTENT -->
     <main class="admin-main" id="main-content">
       <!-- NAV -->
       <nav>
@@ -198,7 +214,7 @@
           <div class="approvals">
             <h2>42</h2>
             <span class="btn-to-calendar">
-              <a href="scheduling.html"
+              <a id="btn-to-calendar" href="Admin_calendar.html"
                 ><svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="200"

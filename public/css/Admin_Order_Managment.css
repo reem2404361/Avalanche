@@ -698,8 +698,15 @@ tfoot td {
   opacity: 1;
 }
 
+#btn-to-calendar {
+  cursor: none;
+}
 
-/* ===== COLLAPSED SIDEBAR ===== */
+#btn-to-calendar:hover {
+  cursor: none;
+}
+
+/* COLLAPSED SIDEBAR */
 aside.collapsed {
   width: 72px;
   padding: 40px 10px;
