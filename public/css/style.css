@@ -1,176 +1,207 @@
-/* ═══════════════════════════════════════════
-   style.css  —  Shared Layout & Navigation
-   (sidebar · top-nav · footer · cursor)
-═══════════════════════════════════════════ */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap');
-
-/* ── VARIABLES ── */
+/*  VARIABLES  */
 :root {
-    --font-main: "Manrope", sans-serif;
-    --background: #edf2f4;
-    --primary:    #0d1321;
-    --secondary:  #1d2d44;
-    --surface:    #3e5c76;
-    --accent:     #748cab;
-    --textlight:  #edf2f4;
-    --cursor:     #ffb703;
-    --cglow:      #f6ba67;
-    --shadow-soft:  0 10px 30px rgba(0,0,0,0.04);
-    --shadow-hover: 0 20px 40px rgba(0,0,0,0.08);
-    --danger: #ef4444;
+  --font-main: "Manrope", sans-serif;
+  --background: #edf2f4;
+  --primary: #0d1321;
+  --secondary: #1d2d44;
+  --surface: #3e5c76;
+  --accent: #748cab;
+  --textlight: #edf2f4;
+  --cursor: #ffb703;
+  --cglow: #f6ba67;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.08);
+  --danger: #ef4444;
 }
 
-/* ── RESET ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* RESET  */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
-    font-family: var(--font-main);
-    background: var(--background);
-    display: flex;
-    flex-direction: row;
-    min-height: 100vh;
-    overflow-x: hidden;
-    cursor: none;
+  font-family: var(--font-main);
+  background: var(--background);
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none;
 }
 
-/* ══════════════════════════════════
-   CUSTOM CURSOR
-══════════════════════════════════ */
-#cursor, #cursor-ring {
-    position: fixed;
-    top: 0; left: 0;
-    pointer-events: none;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
+/* CUSTOM CURSOR  */
+#cursor,
+#cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
 }
 
 #cursor {
-    width: 12px; height: 12px;
-    background: var(--cursor);
-    box-shadow: 0 0 10px var(--cglow), 0 0 20px var(--cglow);
-    transition: transform .12s ease;
+  width: 12px;
+  height: 12px;
+  background: var(--cursor);
+  box-shadow:
+    0 0 10px var(--cglow),
+    0 0 20px var(--cglow);
+  transition: transform 0.12s ease;
 }
 
 #cursor-ring {
-    width: 36px; height: 36px;
-    border: 1.5px solid var(--cursor);
-    z-index: 9998;
-    opacity: .5;
-    transition: transform .35s cubic-bezier(.25,.46,.45,.94);
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--cursor);
+  z-index: 9998;
+  opacity: 0.5;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* ══════════════════════════════════
-   SIDEBAR
-══════════════════════════════════ */
-
-
-/* ══════════════════════════════════
-   TOP NAV
-══════════════════════════════════ */
+/* TOP NAV */
 nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    height: 60px;
-    background-color: rgba(237,242,244,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 0 20px var(--accent);
-    position: fixed;
-    top: 0;
-    left: 270px;
-    width: calc(100% - 270px);
-    z-index: 100;
-    transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 60px;
+  background-color: rgba(237, 242, 244, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px var(--accent);
+  position: fixed;
+  top: 0;
+  left: 270px;
+  width: calc(100% - 270px);
+  z-index: 100;
+  transition: all 0.4s ease;
 }
 
 .nav-left {
-    font-size: 20px; font-weight: 800;
-    background: linear-gradient(45deg, #1d2d44, #3e5c76, #748cab, #edf2f4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(45deg, #1d2d44, #3e5c76, #748cab, #edf2f4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.nav-right { display: flex; align-items: center; gap: 8px; }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .nav-right a {
-    display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px;
-    transition: opacity 0.2s ease;
-    cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  transition: opacity 0.2s ease;
+  cursor: none;
 }
-.nav-right a:hover { opacity: 0.7; }
-.nav-right svg { width: 22px; height: 22px; fill: var(--primary); }
+.nav-right a:hover {
+  opacity: 0.7;
+}
+.nav-right svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--primary);
+}
 
 /* Upload button in nav */
 .upload-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-family: var(--font-main);
-    font-weight: 700;
-    font-size: 13px;
-    cursor: none;
-    transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: none;
+  transition: 0.3s;
 }
-.upload-btn:hover { background: var(--accent); transform: translateY(-2px); }
-.upload-btn svg { stroke: white; }
+.upload-btn:hover {
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+.upload-btn svg {
+  stroke: white;
+}
 
-/* ══════════════════════════════════
-   MAIN CONTENT SHELL
-══════════════════════════════════ */
+/* MAIN CONTENT SHELL */
 main.admin-main {
-    padding-top: 60px; /* height of nav */
-    margin-left: 270px;
-    width: calc(100% - 270px);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    transition: all 0.4s ease;
+  padding-top: 60px; /* height of nav */
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: all 0.4s ease;
 }
 
-.content-padding { padding: 40px 5%; flex: 1; }
+.content-padding {
+  padding: 40px 5%;
+  flex: 1;
+}
 
 /* Expanded (collapsed sidebar) states */
-.expanded-main { margin-left: 72px !important; width: calc(100% - 72px) !important; }
-.expanded-nav  { left: 72px !important; width: calc(100% - 72px) !important; }
+.expanded-main {
+  margin-left: 72px !important;
+  width: calc(100% - 72px) !important;
+}
+.expanded-nav {
+  left: 72px !important;
+  width: calc(100% - 72px) !important;
+}
 
-/* ══════════════════════════════════
-   FOOTER
-══════════════════════════════════ */
+/* FOOTER */
 footer.sitefooter {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 40px 60px;
-    border-top: 1px solid rgba(62,92,118,0.1);
-    margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 60px;
+  border-top: 1px solid rgba(62, 92, 118, 0.1);
+  margin-top: 50px;
 }
 
 .footer-left {
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--surface);
-    opacity: 0.5;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--surface);
+  opacity: 0.5;
 }
 
-.footer-right { display: flex; flex-direction: row; align-items: center; gap: 32px; }
-.footer-right p {
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--surface);
-    opacity: 0.5;
-    cursor: none;
-    transition: opacity 0.2s ease;
+.footer-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
 }
-.footer-right p:hover { opacity: 1; }
+.footer-right p {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--surface);
+  opacity: 0.5;
+  cursor: none;
+  transition: opacity 0.2s ease;
+}
+.footer-right p:hover {
+  opacity: 1;
+}

@@ -1,8 +1,4 @@
-/* ═══════════════════════════════════════════
-   scheduler.js  —  Scheduler Interactions
-═══════════════════════════════════════════ */
-
-// ── SIDEBAR TOGGLE ──
+// SIDEBAR TOGGLE 
 const toggleBtn = document.getElementById("toggle-btn");
 const sidebar   = document.querySelector("aside.admin-sidebar");
 const mainEl    = document.getElementById("main-content");
@@ -14,7 +10,7 @@ toggleBtn.addEventListener("click", () => {
     navEl.classList.toggle("expanded-nav");
 });
 
-// ── CUSTOM CURSOR ──
+//  CUSTOM CURSOR
 const cursor = document.getElementById("cursor");
 const ring   = document.getElementById("cursor-ring");
 
@@ -23,12 +19,7 @@ document.addEventListener("mousemove", (e) => {
     ring.style.transform   = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
 });
 
-document.querySelectorAll('button, a, .day-box, .side-btn').forEach(el => {
-    el.addEventListener("mouseenter", () => { ring.style.borderColor = "var(--primary)"; });
-    el.addEventListener("mouseleave", () => { ring.style.borderColor = "var(--cursor)"; });
-});
-
-// ── CALENDAR ──
+// CALENDAR 
 let currentMonth = 3; // April (0-indexed)
 let selectedDay  = null;
 
@@ -72,7 +63,11 @@ function changeMonth(dir) {
 
 function nextStep() {
     if (!selectedDay) {
-        alert("Please select a date first.");
+        const t = document.createElement('div');
+        t.textContent = "Please select a date first.";
+        t.style.cssText = "position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:var(--primary);color:var(--textlight);padding:16px 32px;border-radius:14px;font-family:var(--font-main);font-weight:700;font-size:0.9rem;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,0.2);transition:opacity 0.3s";
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
         return;
     }
     document.getElementById('step-1').classList.add('hidden-step');
@@ -94,7 +89,7 @@ function goBack() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── ORDER SUBMISSION ──
+//  ORDER SUBMISSION 
 function handleOrder(e) {
     e.preventDefault();
     const bus  = document.getElementById('bus-img');
@@ -107,7 +102,7 @@ function handleOrder(e) {
 
     setTimeout(() => {
         alert("Your audit has been booked! 🚌 We'll be in touch soon.");
-        window.location.href = 'dashb.html';
+        window.location.href = 'User_Dashboard.html';
     }, 3100);
 }
 
@@ -121,5 +116,5 @@ function resetAll() {
     path.style.width = "0%";
 }
 
-// ── INIT ──
+// INIT 
 renderCal();
