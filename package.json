@@ -1,0 +1,32 @@
+{
+  "name": "avalanche",
+  "version": "1.0.0",
+  "description": "This project is a web-based platform designed to allow users to order solar panels and schedule their installation online. The system supports the transition to renewable energy by simplifying the process of selecting, booking, and managing solar panel services.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js", 
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reem2404361/Avalanche.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/reem2404361/Avalanche/issues"
+  },
+  "homepage": "https://github.com/reem2404361/Avalanche#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.3",
+    "nodemon": "^3.1.14"
+  }
+}
