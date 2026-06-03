@@ -13,12 +13,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-// app.use('/api/auth', require('./routes/authRoutes'));
-// app.use('/api/users', require('./routes/userRoutes'));
-// app.use('/api/products', require('./routes/productRoutes'));
-// app.use('/api/orders', require('./routes/orderRoutes'));
-// app.use('/api/appointments', require('./routes/appointmentRoutes'));
-// app.use('/', require('./routes/pageRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
+app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/', require('./routes/pageRoutes'));
 
 // Global error handler 
 app.use(errorHandler);
