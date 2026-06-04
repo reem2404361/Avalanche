@@ -14,18 +14,12 @@ app.use(express.urlencoded({ extended: true })); // It is a middleware that read
 app.use(express.static('public'));
 
 // Routes
-// app.use('/api/auth', require('./routes/authRoutes'));
-// app.use('/api/users', require('./routes/userRoutes'));
-// app.use('/api/products', require('./routes/productRoutes'));
-<<<<<<< HEAD
-// app.use('/api/orders', require('./routes/orderRoutes'));
- app.use('/api/appointments', require('./routes/appointmentRoutes'));
-// app.use('/', require('./routes/pageRoutes'));
-=======
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
-// app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/api/appointments', require('./routes/appointmentRoutes'));
 app.use('/', require('./routes/pageRoutes'));
->>>>>>> 1448d3cb5f1a592b8588e2710a0f7d1ef1cb4933
 
 // Global error handler 
 app.use(errorHandler);
