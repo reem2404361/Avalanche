@@ -10,15 +10,22 @@ connectDB();
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); // It is a middleware that reads data sent from HTML forms and puts it inside req.body
+app.use(express.static('public'));
 
 // Routes
 // app.use('/api/auth', require('./routes/authRoutes'));
 // app.use('/api/users', require('./routes/userRoutes'));
 // app.use('/api/products', require('./routes/productRoutes'));
+<<<<<<< HEAD
 // app.use('/api/orders', require('./routes/orderRoutes'));
  app.use('/api/appointments', require('./routes/appointmentRoutes'));
 // app.use('/', require('./routes/pageRoutes'));
+=======
+app.use('/api/orders', require('./routes/orderRoutes'));
+// app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/', require('./routes/pageRoutes'));
+>>>>>>> 1448d3cb5f1a592b8588e2710a0f7d1ef1cb4933
 
 // Global error handler 
 app.use(errorHandler);
