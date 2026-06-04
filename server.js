@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.use('/api/users', require('./routes/userRoutes'));
 // app.use('/api/products', require('./routes/productRoutes'));
 // app.use('/api/orders', require('./routes/orderRoutes'));
-// app.use('/api/appointments', require('./routes/appointmentRoutes'));
+ app.use('/api/appointments', require('./routes/appointmentRoutes'));
 // app.use('/', require('./routes/pageRoutes'));
 
 // Global error handler 

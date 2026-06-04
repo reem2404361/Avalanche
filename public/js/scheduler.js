@@ -1,120 +1,191 @@
-// SIDEBAR TOGGLE 
+
 const toggleBtn = document.getElementById("toggle-btn");
 const sidebar   = document.querySelector("aside.admin-sidebar");
 const mainEl    = document.getElementById("main-content");
 const navEl     = document.querySelector("nav");
 
-toggleBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("collapsed");
-    mainEl.classList.toggle("expanded-main");
-    navEl.classList.toggle("expanded-nav");
-});
+if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        mainEl.classList.toggle("expanded-main");
+        if (navEl) navEl.classList.toggle("expanded-nav");
+    });
+}
 
-//  CUSTOM CURSOR
 const cursor = document.getElementById("cursor");
 const ring   = document.getElementById("cursor-ring");
 
 document.addEventListener("mousemove", (e) => {
-    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-    ring.style.transform   = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    if (cursor) cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    if (ring)   ring.style.transform   = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
 });
 
-// CALENDAR 
-let currentMonth = 3; // April (0-indexed)
+let currentMonth = new Date().getMonth();
+let currentYear  = new Date().getFullYear();
 let selectedDay  = null;
 
 const months = [
-    "January","February","March","April",
-    "May","June","July","August",
-    "September","October","November","December"
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
 ];
 
-const daysInMonth = [31,28,30,31,30,31,31,28,31,30,31,30];
-
 function renderCal() {
-    const cal = document.getElementById('calendar-days');
+    const cal = document.getElementById("calendar-days");
     if (!cal) return;
     cal.innerHTML = "";
-    document.getElementById('monthLabel').innerText = months[currentMonth] + " 2026";
+    document.getElementById("monthLabel").innerText = `${months[currentMonth]} ${currentYear}`;
 
-    const total = daysInMonth[currentMonth];
-    for (let i = 1; i <= total; i++) {
-        const d = document.createElement('div');
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.className = "day-box day-empty";
+        cal.appendChild(empty);
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const d = document.createElement("div");
         d.innerText = i;
-        d.className = "day-box" + (selectedDay === i && currentMonth === currentMonth ? "" : "");
-        if (selectedDay === i) d.classList.add("day-selected");
+        d.className = "day-box";
 
-        d.onclick = function () {
-            document.querySelectorAll('.day-box').forEach(el => el.classList.remove("day-selected"));
-            this.classList.add("day-selected");
-            selectedDay = i;
-            // Update summary date
-            document.getElementById('summary-date').innerText = months[currentMonth] + " " + i + ", 2026";
-        };
+        const thisDate = new Date(currentYear, currentMonth, i);
+        if (thisDate < today) {
+            d.classList.add("day-past");
+            d.style.opacity = "0.3";
+            d.style.cursor  = "not-allowed";
+        } else {
+            if (selectedDay === i && currentMonth === new Date().getMonth()) {
+                d.classList.add("day-selected");
+            }
+            d.onclick = function () {
+                document.querySelectorAll(".day-box").forEach(el => el.classList.remove("day-selected"));
+                this.classList.add("day-selected");
+                selectedDay = i;
+
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+                const hiddenInput = document.getElementById("hidden-date-input");
+                if (hiddenInput) hiddenInput.value = dateStr;
+
+                const summaryDate = document.getElementById("summary-date");
+                if (summaryDate) summaryDate.innerText = `${months[currentMonth]} ${i}, ${currentYear}`;
+            };
+        }
         cal.appendChild(d);
     }
 }
 
 function changeMonth(dir) {
-    currentMonth = Math.min(11, Math.max(0, currentMonth + dir));
+    currentMonth += dir;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
     selectedDay = null;
     renderCal();
 }
 
 function nextStep() {
     if (!selectedDay) {
-        const t = document.createElement('div');
-        t.textContent = "Please select a date first.";
-        t.style.cssText = "position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:var(--primary);color:var(--textlight);padding:16px 32px;border-radius:14px;font-family:var(--font-main);font-weight:700;font-size:0.9rem;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,0.2);transition:opacity 0.3s";
-        document.body.appendChild(t);
-        setTimeout(() => t.remove(), 3000);
+        alert("Please select a date first.");
         return;
     }
-    document.getElementById('step-1').classList.add('hidden-step');
-    const s2 = document.getElementById('step-2');
-    s2.classList.remove('hidden-step');
+    document.getElementById("step-1").classList.add("hidden-step");
+    const s2 = document.getElementById("step-2");
+    s2.classList.remove("hidden-step");
 
-    // Update step indicator
-    document.getElementById('dot-1').classList.remove('active');
-    document.getElementById('dot-2').classList.add('active');
+    document.getElementById("dot-1").classList.remove("active");
+    document.getElementById("dot-2").classList.add("active");
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function goBack() {
-    document.getElementById('step-2').classList.add('hidden-step');
-    document.getElementById('step-1').classList.remove('hidden-step');
-    document.getElementById('dot-2').classList.remove('active');
-    document.getElementById('dot-1').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById("step-2").classList.add("hidden-step");
+    document.getElementById("step-1").classList.remove("hidden-step");
+    document.getElementById("dot-2").classList.remove("active");
+    document.getElementById("dot-1").classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-//  ORDER SUBMISSION 
-function handleOrder(e) {
-    e.preventDefault();
-    const bus  = document.getElementById('bus-img');
-    const path = document.getElementById('fill-path');
+function selectSlot(btn) {
+    document.querySelectorAll(".slot-btn").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
 
-    bus.style.transition  = "left 3s linear";
-    path.style.transition = "width 3s linear";
-    bus.style.left        = "calc(100% - 10px)";
-    path.style.width      = "100%";
+    const slot = btn.getAttribute("data-slot");
+    const hiddenSlot = document.getElementById("hidden-slot-input");
+    if (hiddenSlot) hiddenSlot.value = slot;
 
-    setTimeout(() => {
-        alert("Your audit has been booked! 🚌 We'll be in touch soon.");
-        window.location.href = 'User_Dashboard.html';
-    }, 3100);
+    const summarySlot = document.getElementById("summary-slot");
+    if (summarySlot) summarySlot.innerText = slot;
 }
 
 function resetAll() {
-    document.getElementById('orderForm').reset();
-    const bus  = document.getElementById('bus-img');
-    const path = document.getElementById('fill-path');
-    bus.style.transition  = "none";
-    path.style.transition = "none";
-    bus.style.left  = "-5rem";
-    path.style.width = "0%";
+    document.getElementById("orderForm").reset();
+    document.querySelectorAll(".slot-btn").forEach(b => b.classList.remove("selected"));
+    const hiddenSlot = document.getElementById("hidden-slot-input");
+    if (hiddenSlot) hiddenSlot.value = "";
+    const errBanner = document.getElementById("form-error");
+    if (errBanner) { errBanner.style.display = "none"; errBanner.innerText = ""; }
 }
 
-// INIT 
+async function handleOrder(e) {
+    e.preventDefault();
+
+    const errBanner = document.getElementById("form-error");
+    const submitBtn = document.getElementById("submit-btn");
+
+    const date     = document.getElementById("hidden-date-input").value;
+    const timeSlot = document.getElementById("hidden-slot-input").value;
+
+    if (!date) {
+        errBanner.innerText = "Please go back and select a date.";
+        errBanner.style.display = "block";
+        return;
+    }
+    if (!timeSlot) {
+        errBanner.innerText = "Please select a time slot before submitting.";
+        errBanner.style.display = "block";
+        return;
+    }
+
+    errBanner.style.display = "none";
+
+    const form = document.getElementById("orderForm");
+    const formData = new FormData(form);
+    const payload  = {};
+    formData.forEach((val, key) => { payload[key] = val; });
+
+    submitBtn.classList.add("submit-loading");
+    submitBtn.innerText = "Booking...";
+
+    try {
+        const response = await fetch("/appointments", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.redirectUrl) {
+            window.location.href = data.redirectUrl;
+        } else {
+            errBanner.innerText = data.message || "Something went wrong. Please try again.";
+            errBanner.style.display = "block";
+            submitBtn.classList.remove("submit-loading");
+            submitBtn.innerText = "PLACE ORDER →";
+        }
+    } catch (err) {
+        console.error("Booking fetch error:", err);
+        errBanner.innerText = "Network error. Please check your connection and try again.";
+        errBanner.style.display = "block";
+        submitBtn.classList.remove("submit-loading");
+        submitBtn.innerText = "PLACE ORDER →";
+    }
+}
+
 renderCal();
