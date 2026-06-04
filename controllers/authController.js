@@ -5,9 +5,13 @@ const User = require('../models/User');
 // statuscode 3shan bb3t diff codes 3ala 7asb login wala signup lel frontend
 const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign(
-    { id: user._id, role: user.role },    // the payload (the data i actually wanna send in the token)
+    { id: user._id,
+     role: user.role 
+    },    // the payload (the data i actually wanna send in the token)
     process.env.JWT_SECRET,               // the secret key used to sign the token (signature)
-    { expiresIn: process.env.JWT_EXPIRE } // the options (extra settings) (expiration time)
+    { 
+        expiresIn: process.env.JWT_EXPIRE 
+    } // the options (extra settings) (expiration time)
   );
 
   res.status(statusCode).json({
@@ -122,12 +126,4 @@ const login = async (req, res) => {
 };
 
 
-const getProfile = async (req, res) => {
-
-    res.status(200).json({
-        success: true,
-        user: req.user // the auth middleware attaches the user object to the request, so we can access it here to get the user's profile information
-    });
-}
-
-module.exports = {signup, login ,getProfile};
+module.exports = {signup, login};
