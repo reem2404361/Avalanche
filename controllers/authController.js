@@ -1,133 +1,124 @@
+const jwt  = require('jsonwebtoken');
 
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+// ── Mock users store (used when MongoDB is not connected) ─────────────────────
+const mockUsers = [];
+let mockIdCounter = 1;
 
-// statuscode 3shan bb3t diff codes 3ala 7asb login wala signup lel frontend
+function isDbConnected() {
+  try {
+    const mongoose = require('mongoose');
+    return mongoose.connection.readyState === 1;
+  } catch (_) { return false; }
+}
+
 const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign(
-    { id: user._id, role: user.role },    // the payload (the data i actually wanna send in the token)
-    process.env.JWT_SECRET,               // the secret key used to sign the token (signature)
-    { expiresIn: process.env.JWT_EXPIRE } // the options (extra settings) (expiration time)
+    { id: user._id || user.id, role: user.role, email: user.email, name: user.name },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE || '7d' }
   );
 
   res.status(statusCode).json({
     success: true,
     token,
-    user: 
-    {       
-      id:       user._id,
+    user: {
+      id:       user._id || user.id,
       name:     user.name,
       email:    user.email,
       role:     user.role,
-      phone:    user.phone,
-      location: user.location,
+      phone:    user.phone    || '',
+      location: user.location || '',
     }
-  }); 
+  });
 };
 
-
-
-
-// SIGNUP
-
+// ── SIGNUP ────────────────────────────────────────────────────────────────────
 const signup = async (req, res) => {
-    try{
-        const{name,email,password} = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-        if (!name || !email || !password) {
-           return res.status(400).json({
-             success: false,
-             message: 'Please provide name, email and password'
-    });
-}
-
-
-        
-
-        const existingUser = await User.findOne({ email });  //findOne searches for the first document that matches the query. If no document is found, it returns null.
-
-        if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: 'An account with this email already exists'
-            });
-        }
-        const user = await User.create({
-            name,
-            email,
-            password
-        });
-
-        sendTokenResponse(user, 201, res);  
-
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide name, email and password' });
     }
-    catch(err){
-        console.error(err);
 
-        res.status(500).json(
-        { 
-            success: false, 
-            message: 'Server error'
-        });
+    if (isDbConnected()) {
+      const User = require('../models/User');
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ success: false, message: 'An account with this email already exists' });
+      }
+      const user = await User.create({ name, email, password });
+      return sendTokenResponse(user, 201, res);
     }
+
+    // ── No-DB mock mode ──
+    const exists = mockUsers.find(u => u.email === email.toLowerCase());
+    if (exists) {
+      return res.status(400).json({ success: false, message: 'An account with this email already exists' });
+    }
+
+    const bcrypt = require('bcrypt');
+    const hashedPw = await bcrypt.hash(password, 10);
+
+    const newUser = {
+      _id:      `mockuser${mockIdCounter++}`,
+      name,
+      email:    email.toLowerCase(),
+      password: hashedPw,
+      role:     'customer',
+    };
+    mockUsers.push(newUser);
+
+    return sendTokenResponse(newUser, 201, res);
+
+  } catch (err) {
+    console.error('Signup error:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 };
 
-
-//LOGIN
-
-
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
 const login = async (req, res) => {
-    try{
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide email and password'
-            });
-        }
-
-        const user = await User.findOne({ email }).select('+password'); // we need to select the password field manually because i made the pw hidden in the schema (select: false)
-
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid credentials' //no hints for security
-            });
-        }
-
-        const isMatch = await user.comparePassword(password);
-
-        if (!isMatch) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
-
-
-        sendTokenResponse(user, 200, res); 
-
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide email and password' });
     }
-    catch(err){
-        
-        console.error(err);
-        
-        res.status(500).json(
-        {   
-            success: false, 
-            message: 'Server error'
-        });
+
+    if (isDbConnected()) {
+      const User = require('../models/User');
+      const user = await User.findOne({ email }).select('+password');
+      if (!user) return res.status(400).json({ success: false, message: 'Invalid credentials' });
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) return res.status(400).json({ success: false, message: 'Invalid credentials' });
+      return sendTokenResponse(user, 200, res);
     }
+
+    // ── No-DB mock mode ──
+    const bcrypt = require('bcrypt');
+    const user = mockUsers.find(u => u.email === email.toLowerCase());
+
+    // Allow a hardcoded admin for testing
+    if (email === 'admin@avalanche.eg' && password === 'Admin1234') {
+      const adminUser = { _id: 'adminmock001', name: 'Admin', email: 'admin@avalanche.eg', role: 'admin' };
+      return sendTokenResponse(adminUser, 200, res);
+    }
+
+    if (!user) return res.status(400).json({ success: false, message: 'Invalid credentials' });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ success: false, message: 'Invalid credentials' });
+
+    return sendTokenResponse(user, 200, res);
+
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 };
-
 
 const getProfile = async (req, res) => {
+  res.status(200).json({ success: true, user: req.user });
+};
 
-    res.status(200).json({
-        success: true,
-        user: req.user // the auth middleware attaches the user object to the request, so we can access it here to get the user's profile information
-    });
-}
-
-module.exports = {signup, login ,getProfile};
+module.exports = { signup, login, getProfile };

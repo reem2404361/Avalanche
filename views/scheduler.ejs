@@ -147,31 +147,28 @@
         <section id="step-1" class="step-content">
             <div class="calendar-panel">
                 <div class="cal-header">
-                    <button type="button" onclick="changeMonth(-1)" class="cal-nav-btn">←</button>
+                    <button type="button" onclick="changeMonth(-1)" class="cal-nav-btn">&lt;</button>
                     <h2 id="monthLabel" class="cal-month-label"></h2>
-                    <button type="button" onclick="changeMonth(1)" class="cal-nav-btn">→</button>
+                    <button type="button" onclick="changeMonth(1)" class="cal-nav-btn">&gt;</button>
                 </div>
                 <div class="cal-weekdays">
                     <span>SUN</span><span>MON</span><span>TUE</span>
                     <span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
                 </div>
                 <div id="calendar-days" class="calendar-grid"></div>
-                <button type="button" onclick="nextStep()" class="confirm-btn">CONFIRM DATE →</button>
+                <button type="button" onclick="nextStep()" class="confirm-btn">CONFIRM DATE &gt;</button>
             </div>
         </section>
 
         <section id="step-2" class="step-content hidden-step">
             <div class="step2-grid">
 
-                <%# No action= needed — we submit via fetch in scheduler.js %>
-                <form id="orderForm" class="form-panel" onsubmit="handleOrder(event)">
-
+               <form id="appointmentForm" class="form-panel" action="/appointments" method="POST">
                     <div id="form-error" class="error-banner"></div>
 
                     <span class="subtitle">CUSTOMER DETAILS</span>
                     <h2 class="form-title">Fill in the details</h2>
 
-                    <%# These hidden fields get filled by JS before submission %>
                     <input type="hidden" id="hidden-date-input" name="date" value="">
                     <input type="hidden" id="hidden-slot-input" name="timeSlot" value="">
 
@@ -182,7 +179,7 @@
                         </div>
                         <div class="form-field">
                             <label>Age</label>
-                            <input type="number" name="age" placeholder="18 – 60" min="18" max="60" required>
+                            <input type="number" name="age" placeholder="18 - 60" min="18" max="60" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -196,12 +193,11 @@
                         </div>
                     </div>
 
-                    <%# Time slot picker -%>
                     <label style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; opacity:0.5; display:block; margin-bottom:10px;">Select Time Slot</label>
                     <div class="time-slot-grid">
-                        <button type="button" class="slot-btn" data-slot="09:00 - 12:00" onclick="selectSlot(this)">09:00 – 12:00</button>
-                        <button type="button" class="slot-btn" data-slot="12:00 - 15:00" onclick="selectSlot(this)">12:00 – 15:00</button>
-                        <button type="button" class="slot-btn" data-slot="15:00 - 18:00" onclick="selectSlot(this)">15:00 – 18:00</button>
+                        <button type="button" class="slot-btn" data-slot="09:00 - 12:00" onclick="selectSlot(this)">09:00 - 12:00</button>
+                        <button type="button" class="slot-btn" data-slot="12:00 - 15:00" onclick="selectSlot(this)">12:00 - 15:00</button>
+                        <button type="button" class="slot-btn" data-slot="15:00 - 18:00" onclick="selectSlot(this)">15:00 - 18:00</button>
                     </div>
 
                     <div class="form-field" style="margin-bottom:20px;">
@@ -210,7 +206,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="confirm-btn" id="submit-btn">PLACE ORDER →</button>
+                        <button type="submit" class="confirm-btn" id="submit-btn">BOOK APPOINTMENT &gt;</button>
                         <button type="button" onclick="resetAll()" class="reset-btn">RESET</button>
                     </div>
                 </form>
@@ -219,11 +215,11 @@
                     <span class="subtitle">BOOKING SUMMARY</span>
                     <div class="summary-row">
                         <p>Selected Date</p>
-                        <strong id="summary-date">—</strong>
+                        <strong id="summary-date">---</strong>
                     </div>
                     <div class="summary-row">
                         <p>Time Slot</p>
-                        <strong id="summary-slot">—</strong>
+                        <strong id="summary-slot">---</strong>
                     </div>
                     <div class="summary-row">
                         <p>Service</p>
@@ -238,7 +234,7 @@
                         <span>Total</span>
                         <span class="summary-price">EGP 2,500</span>
                     </div>
-                    <button type="button" onclick="goBack()" class="back-btn">← Change Date</button>
+                    <button type="button" onclick="goBack()" class="back-btn">&lt; Change Date</button>
                 </div>
 
             </div>
@@ -247,7 +243,7 @@
     </div>
 
     <footer class="sitefooter">
-        <p class="footer-left">AVALANCHE © 2026. EMPOWERING SUSTAINABLE GROWTH.</p>
+        <p class="footer-left">AVALANCHE &copy; 2026. EMPOWERING SUSTAINABLE GROWTH.</p>
         <div class="footer-right">
             <p>SYSTEM STATUS: ONLINE</p>
             <p>PRIVACY POLICY</p>

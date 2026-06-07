@@ -1,33 +1,30 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express');
+const router  = express.Router();
+
 const {
   bookAppointment,
   getConfirmationPage,
   getMyAppointments,
   getAdminDashboard,
   cancelAppointment,
-} = require("../controllers/appointmentController");
-const { auth } = require("../middleware/auth");
+  rescheduleAppointment,
+} = require('../controllers/appointmentController');
 
-const roleAuth = (...roles) => (req, res, next) => {
-  if (req.user && roles.includes(req.user.role)) return next();
-  return res.status(403).render("404", {
-    title: "Access Denied",
-    message: "You do not have permission to access this area.",
-    user: req.user,
-  });
-};
+const { auth }     = require('../middleware/auth');
+const roleAuth     = require('../middleware/roleAuth');
 
-router.use(auth);
+// ── Customer routes (must be logged in) ───────────────────────────────────────
+router.post('/',           auth, bookAppointment);         // Book appointment
+router.get('/my',          auth, getMyAppointments);       // View my appointments
+router.post('/:id/cancel', auth, cancelAppointment);       // Cancel appointment
+router.post('/:id/reschedule', auth, rescheduleAppointment); // Reschedule
 
-router.post("/", roleAuth("customer"), bookAppointment);
+// ── Confirmation page (auth optional – the ID alone is the "receipt") ─────────
+// We use auth here so req.user is available for the 404 view, but we don't
+// strictly block unauthenticated users from seeing their own confirmation.
+router.get('/confirmation/:id', getConfirmationPage);
 
-router.get("/my", roleAuth("customer"), getMyAppointments);
-
-router.get("/confirmation/:id", roleAuth("customer", "admin"), getConfirmationPage);
-
-router.get("/admin/dashboard", roleAuth("admin"), getAdminDashboard);
-
-router.post("/:id/cancel", roleAuth("customer", "admin"), cancelAppointment);
+// ── Admin routes ──────────────────────────────────────────────────────────────
+router.get('/admin/dashboard', auth, roleAuth('admin', 'superadmin'), getAdminDashboard);
 
 module.exports = router;

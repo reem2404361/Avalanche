@@ -1,37 +1,40 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-const errorHandler = require('./middleware/errorHandler');
+const express  = require('express');
+const dotenv   = require('dotenv');
+const path     = require('path');
+const mongoose = require('mongoose');
+const ejs      = require('ejs');
 
 dotenv.config();
-
-connectDB();
 
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // It is a middleware that reads data sent from HTML forms and puts it inside req.body
-app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-// app.use('/api/auth', require('./routes/authRoutes'));
-// app.use('/api/users', require('./routes/userRoutes'));
-// app.use('/api/products', require('./routes/productRoutes'));
-<<<<<<< HEAD
-// app.use('/api/orders', require('./routes/orderRoutes'));
- app.use('/api/appointments', require('./routes/appointmentRoutes'));
-// app.use('/', require('./routes/pageRoutes'));
-=======
-app.use('/api/orders', require('./routes/orderRoutes'));
-// app.use('/api/appointments', require('./routes/appointmentRoutes'));
-app.use('/', require('./routes/pageRoutes'));
->>>>>>> 1448d3cb5f1a592b8588e2710a0f7d1ef1cb4933
+app.engine('ejs', ejs.renderFile);
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-// Global error handler 
-app.use(errorHandler);
+if (process.env.MONGO_URI) {
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.error('MongoDB connection error:', err));
+} else {
+  console.warn('No MONGO_URI in .env — running in mock/in-memory mode');
+}
+
+app.use('/api/auth',     require('./routes/authRoutes'));
+app.use('/api/orders',   require('./routes/orderRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/users',    require('./routes/userRoutes'));
+app.use('/appointments', require('./routes/appointmentRoutes'));
+app.use('/',             require('./routes/pageRoutes'));
+
+app.use(require('./middleware/errorHandler'));
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

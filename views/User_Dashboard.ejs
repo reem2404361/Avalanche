@@ -6,7 +6,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="..\public\css\userdash.css" />
+    <link rel="stylesheet" href="/css/userdash.css" />
     <title>Avalanche</title>
   </head>
   <body>
@@ -59,7 +59,7 @@
           <li>
             <button
               class="side-btn orders"
-              onclick="location.href = 'Customer_Order_History.html'"
+              onclick="location.href='/orders/my'"
             >
               <svg
                 width="24"
@@ -84,7 +84,7 @@
           <li>
             <button
               class="side-btn catalog"
-              onclick="location.href = 'customercatalog.html'"
+              onclick="location.href = '/customercatalog'"
             >
               <svg
                 width="24"
@@ -108,7 +108,7 @@
           <li>
             <button
               class="side-btn appointments"
-              onclick="location.href = 'scheduler.html'"
+              onclick="location.href = '/scheduler'"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -132,7 +132,7 @@
           <hr />
           <button
             class="side-btn logout"
-            onclick="location.href = ' Logout.html'"
+            onclick="location.href='/logout'"
           >
             <svg
               viewBox="0 0 24 24"
@@ -380,7 +380,7 @@
         <div class="bottom-section">
           <div class="left">
             <div class="image-card">
-              <img src="../public/images/user2.jpg" alt="Trees" />
+              <img src="/images/user2.jpg" alt="Trees" />
               <div class="image-overlay"></div>
               <div class="image-text">
                 <h3>Rooted in Nature, Powered by the sun</h3>
@@ -394,7 +394,7 @@
             <div class="left-cards">
               <div
                 class="calc-card"
-                onclick="window.location.href = 'calculator.html'"
+                onclick="window.location.href = '/calculator'"
               >
                 <svg
                   fill="currentColor"
@@ -454,7 +454,7 @@
           </div>
 
           <div class="image-card">
-            <img src="../public/images/userdash.jpg" alt="Solar panels" />
+            <img src="/images/userdash.jpg" alt="Solar panels" />
             <div class="image-overlay"></div>
             <div class="image-text">
               <h3>Sustainable Living</h3>
@@ -468,6 +468,6 @@
       </div>
     </div>
 
-    <script src="../public/js/userdash.js"></script>
+    <script src="/js/userdash.js"></script>
   </body>
 </html>

@@ -1,25 +1,27 @@
+// ── Custom cursor ──────────────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
 
+document.addEventListener('mousemove', (e) => {
+    if (cursor) cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    if (ring)   ring.style.transform   = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+});
+
+// ── Sidebar toggle ─────────────────────────────────────────────────────────────
 const toggleBtn = document.getElementById("toggle-btn");
 const sidebar   = document.querySelector("aside.admin-sidebar");
 const mainEl    = document.getElementById("main-content");
 const navEl     = document.querySelector("nav");
 
-if (toggleBtn) {
+if (toggleBtn && sidebar) {
     toggleBtn.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
-        mainEl.classList.toggle("expanded-main");
-        if (navEl) navEl.classList.toggle("expanded-nav");
+        if (mainEl) mainEl.classList.toggle("expanded-main");
+        if (navEl)  navEl.classList.toggle("expanded-nav");
     });
 }
 
-const cursor = document.getElementById("cursor");
-const ring   = document.getElementById("cursor-ring");
-
-document.addEventListener("mousemove", (e) => {
-    if (cursor) cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-    if (ring)   ring.style.transform   = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-});
-
+// ── Calendar ───────────────────────────────────────────────────────────────────
 let currentMonth = new Date().getMonth();
 let currentYear  = new Date().getFullYear();
 let selectedDay  = null;
@@ -35,9 +37,9 @@ function renderCal() {
     cal.innerHTML = "";
     document.getElementById("monthLabel").innerText = `${months[currentMonth]} ${currentYear}`;
 
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const firstDay    = new Date(currentYear, currentMonth, 1).getDay();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const today = new Date();
+    const today       = new Date();
     today.setHours(0, 0, 0, 0);
 
     for (let i = 0; i < firstDay; i++) {
@@ -57,9 +59,6 @@ function renderCal() {
             d.style.opacity = "0.3";
             d.style.cursor  = "not-allowed";
         } else {
-            if (selectedDay === i && currentMonth === new Date().getMonth()) {
-                d.classList.add("day-selected");
-            }
             d.onclick = function () {
                 document.querySelectorAll(".day-box").forEach(el => el.classList.remove("day-selected"));
                 this.classList.add("day-selected");
@@ -91,12 +90,9 @@ function nextStep() {
         return;
     }
     document.getElementById("step-1").classList.add("hidden-step");
-    const s2 = document.getElementById("step-2");
-    s2.classList.remove("hidden-step");
-
+    document.getElementById("step-2").classList.remove("hidden-step");
     document.getElementById("dot-1").classList.remove("active");
     document.getElementById("dot-2").classList.add("active");
-
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -121,7 +117,7 @@ function selectSlot(btn) {
 }
 
 function resetAll() {
-    document.getElementById("orderForm").reset();
+    document.getElementById("appointmentForm").reset();
     document.querySelectorAll(".slot-btn").forEach(b => b.classList.remove("selected"));
     const hiddenSlot = document.getElementById("hidden-slot-input");
     if (hiddenSlot) hiddenSlot.value = "";
@@ -129,6 +125,7 @@ function resetAll() {
     if (errBanner) { errBanner.style.display = "none"; errBanner.innerText = ""; }
 }
 
+// ── Form submit — sends JSON with token (AJAX) ─────────────────────────────────
 async function handleOrder(e) {
     e.preventDefault();
 
@@ -139,32 +136,35 @@ async function handleOrder(e) {
     const timeSlot = document.getElementById("hidden-slot-input").value;
 
     if (!date) {
-        errBanner.innerText = "Please go back and select a date.";
-        errBanner.style.display = "block";
+        errBanner.innerText      = "Please go back and select a date.";
+        errBanner.style.display  = "block";
         return;
     }
     if (!timeSlot) {
-        errBanner.innerText = "Please select a time slot before submitting.";
-        errBanner.style.display = "block";
+        errBanner.innerText      = "Please select a time slot before submitting.";
+        errBanner.style.display  = "block";
         return;
     }
 
     errBanner.style.display = "none";
 
-    const form = document.getElementById("orderForm");
+    const form     = document.getElementById("appointmentForm");
     const formData = new FormData(form);
     const payload  = {};
     formData.forEach((val, key) => { payload[key] = val; });
 
     submitBtn.classList.add("submit-loading");
-    submitBtn.innerText = "Booking...";
+    submitBtn.innerText = "Booking…";
 
     try {
+        const token = localStorage.getItem("token") || "";
+
         const response = await fetch("/appointments", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
+                "Content-Type":  "application/json",
+                "Accept":        "application/json",
+                "Authorization": `Bearer ${token}`,
             },
             body: JSON.stringify(payload),
         });
@@ -174,18 +174,27 @@ async function handleOrder(e) {
         if (data.success && data.redirectUrl) {
             window.location.href = data.redirectUrl;
         } else {
-            errBanner.innerText = data.message || "Something went wrong. Please try again.";
-            errBanner.style.display = "block";
+            errBanner.innerText      = data.message || "Something went wrong. Please try again.";
+            errBanner.style.display  = "block";
             submitBtn.classList.remove("submit-loading");
-            submitBtn.innerText = "PLACE ORDER →";
+            submitBtn.innerText = "BOOK APPOINTMENT >";
         }
     } catch (err) {
         console.error("Booking fetch error:", err);
-        errBanner.innerText = "Network error. Please check your connection and try again.";
-        errBanner.style.display = "block";
+        errBanner.innerText      = "Network error. Please check your connection.";
+        errBanner.style.display  = "block";
         submitBtn.classList.remove("submit-loading");
-        submitBtn.innerText = "PLACE ORDER →";
+        submitBtn.innerText = "BOOK APPOINTMENT >";
     }
 }
 
-renderCal();
+// ── Wire up form on load ───────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    renderCal();
+
+    const form = document.getElementById("appointmentForm");
+    if (form) {
+        // FIX: the form was missing its onsubmit handler
+        form.addEventListener("submit", handleOrder);
+    }
+});

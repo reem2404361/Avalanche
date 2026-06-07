@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <!-- FIX: use /css/ absolute path, not ../public\/ css /\ -->
+    <link rel="stylesheet" href="/css/signup.css" />
+    <title>Avalanche | Sign Up</title>
+  </head>
+  <body>
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+
+    <div class="container">
+      <div class="left">
+        <div class="overlay">
+          <h3>Join Avalanche</h3>
+          <h1>Your future,</h1>
+          <h1>powered by<span id="sun"> the sun</span></h1>
+          <p>Join the future of renewable energy in Egypt. Design your solar system with expert engineers and high-end technology.</p>
+        </div>
+      </div>
+      <div class="right">
+        <div class="form-card">
+          <h2>Create Account</h2>
+          <p class="subtitle">Start your solar journey today.</p>
+          <br />
+          <!-- FIX: action removed, JS handles submit via fetch -->
+          <form id="signupForm">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Enter your full name" required />
+            <span id="nameError" style="color: red; font-size:12px;"></span>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required />
+            <span id="emailError" style="color: red; font-size:12px;"></span>
+
+            <label for="password">Password</label>
+            <div class="pw-wrap">
+              <input type="password" id="password" placeholder="Enter your password" required />
+              <button type="button" id="togglePw">
+                <svg width="18" height="18" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.49998 9C5.18597 9 3.56111 7.84827 2.49664 6.66552C1.96405 6.07375 1.57811 5.48029 1.32563 5.03474C1.19968 4.81247 1.10772 4.62838 1.04797 4.50164C1.01811 4.4383 0.996349 4.3894 0.98246 4.35735C0.5 4.5C0.0359408 4.68614C0.143439 4.92805C0.734381 6.01971 1.75334 7.33448C2.93886 8.65173 4.814 10 7.49998 10V9ZM14.5 4.5C14.036 4.31364C14.0175 4.35735C13.6744 5.03474C12.5033 6.66552C11.4389 7.84827 9.814 9 7.49998 9V10C10.186 10 13.2466 7.33448C14.5444 5.52776C14.9557 4.70644C14.5 4.5ZM8 12L7.99998 9.5L6.99998 9.5L7 12L8 12ZM1.35355 10.3536L3.35355 8.35355L2.64645 7.64645L0.646447 9.64645L1.35355 10.3536ZM11.6464 8.35355L13.6464 10.3536L14.3536 9.64645L12.3536 7.64645L11.6464 8.35355Z" fill="#1D2D44"/>
+                </svg>
+              </button>
+            </div>
+            <span id="pwError" style="color: red; font-size:12px;"></span>
+
+            <label for="confirm-password">Confirm Password</label>
+            <div class="cpw-wrap">
+              <input type="password" id="confirm-password" placeholder="Confirm your password" required />
+              <button type="button" id="toggleCpw">
+                <svg width="18" height="18" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.49998 9C5.18597 9 3.56111 7.84827 2.49664 6.66552C1.96405 6.07375 1.57811 5.48029 1.32563 5.03474C1.19968 4.81247 1.10772 4.62838 1.04797 4.50164C1.01811 4.4383 0.996349 4.3894 0.98246 4.35735C0.5 4.5C0.0359408 4.68614C0.143439 4.92805C0.734381 6.01971 1.75334 7.33448C2.93886 8.65173 4.814 10 7.49998 10V9ZM14.5 4.5C14.036 4.31364C14.0175 4.35735C13.6744 5.03474C12.5033 6.66552C11.4389 7.84827 9.814 9 7.49998 9V10C10.186 10 13.2466 7.33448C14.5444 5.52776C14.9557 4.70644C14.5 4.5ZM8 12L7.99998 9.5L6.99998 9.5L7 12L8 12ZM1.35355 10.3536L3.35355 8.35355L2.64645 7.64645L0.646447 9.64645L1.35355 10.3536ZM11.6464 8.35355L13.6464 10.3536L14.3536 9.64645L12.3536 7.64645L11.6464 8.35355Z" fill="#1D2D44"/>
+                </svg>
+              </button>
+            </div>
+            <span id="cpwError" style="color: red; font-size:12px;"></span>
+
+            <button type="submit">Create Account</button>
+          </form>
+          <p class="login">
+            Already have an account? <a href="/login">Log in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIX: absolute path -->
+    <script src="/js/signup.js"></script>
+  </body>
+</html>

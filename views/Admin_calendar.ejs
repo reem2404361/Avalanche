@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calendar</title>
-    <link rel="stylesheet" href="..\public\css\Admin_Calendar.css" />
+    <link rel="stylesheet" href="/css/Admin_Calendar.css" />
   </head>
   <body>
     <div id="cursor"></div>
@@ -33,7 +33,7 @@
         <li>
           <button
             class="side-btn dashboard"
-            onclick="location.href = 'Admin_Dashboard.html'"
+            onclick="location.href='/appointments/admin/dashboard'"
           >
             <svg
               width="24"
@@ -57,7 +57,7 @@
         <li>
           <button
             class="side-btn orders"
-            onclick="location.href = 'Admin_Order_Managment.html'"
+            onclick="location.href='/orders/manage'"
           >
             <svg
               width="24"
@@ -82,7 +82,7 @@
         <li>
           <button
             class="side-btn catalog"
-            onclick="location.href = 'admincatalog.html'"
+            onclick="location.href = '/admincatalog'"
           >
             <svg
               width="24"
@@ -107,7 +107,7 @@
           <button
             class="side-btn appointments"
             id="current"
-            onclick="location.href = 'Admin_calendar.html'"
+            onclick="location.href='/orders/manage'"onclick="location.href='/scheduler'"
           >
             <svg
               viewBox="0 0 24 24"
@@ -131,7 +131,7 @@
         <hr />
         <button
           class="side-btn logout"
-          onclick="location.href = ' Logout.html'"
+          onclick="location.href='/logout'"
         >
           <svg
             viewBox="0 0 24 24"
@@ -282,7 +282,7 @@
 
         <div class="today-card">
           <div class="top-card">
-            <div class="location-time">Cairo • 09:00</div>
+            <div class="location-time">Cairo أ¢â‚¬آ¢ 09:00</div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path
                 d="M96 320C96 289.1 121.1 264 152 264C182.9 264 208 289.1 208 320C208 350.9 182.9 376 152 376C121.1 376 96 350.9 96 320zM264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320zM488 264C518.9 264 544 289.1 544 320C544 350.9 518.9 376 488 376C457.1 376 432 350.9 432 320C432 289.1 457.1 264 488 264z"
@@ -300,7 +300,7 @@
 
         <div class="today-card">
           <div class="top-card">
-            <div class="location-time">Giza • 11:30</div>
+            <div class="location-time">Giza أ¢â‚¬آ¢ 11:30</div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path
                 d="M96 320C96 289.1 121.1 264 152 264C182.9 264 208 289.1 208 320C208 350.9 182.9 376 152 376C121.1 376 96 350.9 96 320zM264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320zM488 264C518.9 264 544 289.1 544 320C544 350.9 518.9 376 488 376C457.1 376 432 350.9 432 320C432 289.1 457.1 264 488 264z"
@@ -318,7 +318,7 @@
 
         <div class="today-card">
           <div class="top-card">
-            <div class="location-time">6TH OF OCTOBER • 02:30</div>
+            <div class="location-time">6TH OF OCTOBER أ¢â‚¬آ¢ 02:30</div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path
                 d="M96 320C96 289.1 121.1 264 152 264C182.9 264 208 289.1 208 320C208 350.9 182.9 376 152 376C121.1 376 96 350.9 96 320zM264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320zM488 264C518.9 264 544 289.1 544 320C544 350.9 518.9 376 488 376C457.1 376 432 350.9 432 320C432 289.1 457.1 264 488 264z"
@@ -339,7 +339,7 @@
         <div class="unassigned-card">
           <div class="right-card">
             <h3>#ORD-9921-Alexandria</h3>
-            <p>Residential • Pending Survey</p>
+            <p>Residential أ¢â‚¬آ¢ Pending Survey</p>
           </div>
           <div class="left-card">
             <svg
@@ -361,7 +361,7 @@
         <div class="unassigned-card">
           <div class="right-card">
             <h3>#ORD-9934-El Gouna</h3>
-            <p>Villa • Awaiting Parts</p>
+            <p>Villa أ¢â‚¬آ¢ Awaiting Parts</p>
           </div>
           <div class="left-card">
             <svg
@@ -383,7 +383,7 @@
         <div class="unassigned-card">
           <div class="right-card">
             <h3>#ORD-9950-Cairo</h3>
-            <p>Apartment • High Priority</p>
+            <p>Apartment أ¢â‚¬آ¢ High Priority</p>
           </div>
           <div class="left-card">
             <svg
@@ -407,7 +407,7 @@
     <!-- FOOTER -->
     <footer class="sitefooter">
       <p class="footer-left">
-        AVALANCHE © 2026. EMPOWERING SUSTAINABLE GROWTH.
+        AVALANCHE ط¢آ© 2026. EMPOWERING SUSTAINABLE GROWTH.
       </p>
       <div class="footer-right">
         <p>SYSTEM STATUS: ONLINE</p>

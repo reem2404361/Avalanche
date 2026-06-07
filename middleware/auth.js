@@ -1,51 +1,113 @@
+/**
+ * auth.js — JWT middleware
+ * Works with OR without MongoDB.
+ * When no DB is connected, it verifies the token and builds a mock req.user
+ * from the JWT payload so all protected pages load without crashing.
+ */
 
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // imports the user model
 
-const auth = async (req, res,next) => {
-    try{
+function parseCookies(req) {
+  const list = {};
+  const header = req.headers.cookie;
+  if (!header) return list;
+  header.split(';').forEach(cookie => {
+    const parts = cookie.split('=');
+    const key   = parts.shift().trim();
+    list[key]   = decodeURIComponent(parts.join('=').trim());
+  });
+  return list;
+}
 
-        let token;
+const auth = async (req, res, next) => {
+  try {
+    let token;
 
-        if( req.headers.authorization && req.headers.authorization.startsWith('Bearer'))
-        {
-
-            //splits the header value by space and takes the second part (the token itself) (the first part is 'Bearer')
-            token = req.headers.authorization.split(' ')[1]; 
-
-        }
-
-        if(!token) 
-        {
-            return res.status(401).json({
-                message: 'Unauthorized',
-                success: false
-            }); 
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // verifies the token using the secret key and decodes the payload to get the user ID
-
-        req.user = await User.findById(decoded.id).select('-password'); //excluding the password field for security reasons(double defense)
-
-        if(!req.user) // checks if the user was not found in the database
-        {
-            return res.status(401).json(
-            {
-                message: 'Unauthorized - user not found',
-                success: false
-            }); // sends a 401 Unauthorized response if the user is not found
-        }
-
-        next(); // if everything is fine, it calls the next middleware or route handler to proceed with the request
-
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
     }
-    catch(err){
-        res.status(401).json({
-             message: 'Unauthorized',
-              success: false  //success to make it easier for the frontend to handle the response
-    });
+    if (!token) {
+      const cookies = parseCookies(req);
+      token = cookies.token;
     }
 
+    if (!token) {
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(401).json({ success: false, message: 'Not authorized, no token' });
+      }
+      return res.redirect('/login');
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Try to load from DB if mongoose is connected, otherwise use token payload
+    try {
+      const mongoose = require('mongoose');
+      if (mongoose.connection.readyState === 1) {
+        const User = require('../models/User');
+        req.user = await User.findById(decoded.id).select('-password');
+        if (!req.user) {
+          if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return res.status(401).json({ success: false, message: 'User not found' });
+          }
+          return res.redirect('/login');
+        }
+      } else {
+        // No DB — build mock user from JWT payload
+        req.user = {
+          _id:   decoded.id,
+          id:    decoded.id,
+          role:  decoded.role || 'customer',
+          email: decoded.email || 'user@avalanche.eg',
+          name:  decoded.name  || 'Avalanche User',
+        };
+      }
+    } catch (_) {
+      // Fallback: build mock user from JWT payload
+      req.user = {
+        _id:   decoded.id,
+        id:    decoded.id,
+        role:  decoded.role || 'customer',
+        email: decoded.email || 'user@avalanche.eg',
+        name:  decoded.name  || 'Avalanche User',
+      };
+    }
+
+    next();
+  } catch (err) {
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      return res.status(401).json({ success: false, message: 'Invalid or expired token' });
+    }
+    return res.redirect('/login');
+  }
 };
 
-module.exports = { auth }; 
+const optionalAuth = async (req, res, next) => {
+  try {
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+    if (!token) {
+      const cookies = parseCookies(req);
+      token = cookies.token;
+    }
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      try {
+        const mongoose = require('mongoose');
+        if (mongoose.connection.readyState === 1) {
+          const User = require('../models/User');
+          req.user = await User.findById(decoded.id).select('-password');
+        } else {
+          req.user = { _id: decoded.id, id: decoded.id, role: decoded.role || 'customer', email: decoded.email || '', name: decoded.name || '' };
+        }
+      } catch (_) {
+        req.user = { _id: decoded.id, id: decoded.id, role: decoded.role || 'customer', email: decoded.email || '', name: decoded.name || '' };
+      }
+    }
+  } catch (_) { /* silently ignore */ }
+  next();
+};
+
+module.exports = { auth, optionalAuth };

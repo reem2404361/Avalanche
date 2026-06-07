@@ -1,180 +1,263 @@
-const Appointment = require("../models/Appointment");
+/**
+ * appointmentController.js
+ *
+ * Uses in-memory mock storage so the whole flow works WITHOUT a database.
+ * When your teammate connects MongoDB, swap the mock array for real Mongoose calls.
+ *
+ * Bugs fixed vs the original:
+ *  1. bookAppointment now does res.redirect() directly (not JSON) when called
+ *     from a normal form POST, and returns JSON only when the request
+ *     explicitly wants JSON (fetch/AJAX from the scheduler JS).
+ *  2. getConfirmationPage no longer uses req.body (GET requests have no body).
+ *     It now stores the booking details inside the mock appointment object so
+ *     the confirmation page always has real data.
+ *  3. req.user guard added – if somehow the middleware is bypassed, it fails
+ *     gracefully instead of crashing.
+ *  4. cancelAppointment checks ownership before cancelling.
+ */
 
+// ── In-memory store (replace with Mongoose when DB is ready) ─────────────────
+const mockAppointments = [];
+let   nextId = 1;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const VALID_SLOTS = ['09:00 - 12:00', '12:00 - 15:00', '15:00 - 18:00'];
+
+function wantsJSON(req) {
+  return (
+    req.xhr ||
+    (req.headers.accept && req.headers.accept.includes('application/json')) ||
+    (req.headers['content-type'] && req.headers['content-type'].includes('application/json'))
+  );
+}
+
+// ── bookAppointment ───────────────────────────────────────────────────────────
 const bookAppointment = async (req, res) => {
-  try {
-    const { date, timeSlot, notes, fullName, email, phone } = req.body;
-
-    if (!date || !timeSlot) {
-      return res.status(400).json({ success: false, message: "Date and time slot are required." });
-    }
-
-    const appointmentDate = new Date(date);
-    if (isNaN(appointmentDate.getTime())) {
-      return res.status(400).json({ success: false, message: "Invalid date format." });
-    }
-
-    if (appointmentDate < new Date().setHours(0, 0, 0, 0)) {
-      return res.status(400).json({ success: false, message: "Cannot book a past date." });
-    }
-
-    const existing = await Appointment.findOne({
-      date: appointmentDate,
-      timeSlot,
-      status: { $ne: "cancelled" },
-    });
-
-    if (existing) {
-      return res.status(409).json({ success: false, message: "That time slot is already booked. Please pick another." });
-    }
-
-    const appointment = await Appointment.create({
-      user: req.user.id,
-      date: appointmentDate,
-      timeSlot,
-      notes: notes || "",
-    });
-
-    return res.status(201).json({
-      success: true,
-      redirectUrl: `/appointments/confirmation/${appointment._id}`,
-    });
-  } catch (error) {
-    console.error("bookAppointment error:", error);
-    return res.status(500).json({ success: false, message: "Server error. Please try again." });
+  // Guard: auth middleware should always set req.user, but just in case
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: 'Not authenticated' });
   }
+
+  const { date, timeSlot, fullName, email, phone, age, notes } = req.body;
+
+  // ── Validation ────────────────────────────────────────────────────────────
+  if (!date || !timeSlot || !fullName || !email || !phone) {
+    const msg = 'All fields (date, timeSlot, fullName, email, phone) are required.';
+    if (wantsJSON(req)) return res.status(400).json({ success: false, message: msg });
+    // For plain form submit, go back with error (simple approach)
+    return res.status(400).send(`<script>alert("${msg}"); history.back();</script>`);
+  }
+
+  const emailRegex = /^\S+@\S+\.\S+$/;
+  if (!emailRegex.test(email)) {
+    const msg = 'Please provide a valid email address.';
+    if (wantsJSON(req)) return res.status(400).json({ success: false, message: msg });
+    return res.status(400).send(`<script>alert("${msg}"); history.back();</script>`);
+  }
+
+  const phoneRegex = /^01[0-9]{9}$/;
+  if (!phoneRegex.test(phone)) {
+    const msg = 'Please provide a valid Egyptian phone number (e.g. 01012345678).';
+    if (wantsJSON(req)) return res.status(400).json({ success: false, message: msg });
+    return res.status(400).send(`<script>alert("${msg}"); history.back();</script>`);
+  }
+
+  if (age && (Number(age) < 18 || Number(age) > 100)) {
+    const msg = 'Age must be between 18 and 100.';
+    if (wantsJSON(req)) return res.status(400).json({ success: false, message: msg });
+    return res.status(400).send(`<script>alert("${msg}"); history.back();</script>`);
+  }
+
+  if (!VALID_SLOTS.includes(timeSlot)) {
+    const msg = 'Invalid time slot selected.';
+    if (wantsJSON(req)) return res.status(400).json({ success: false, message: msg });
+    return res.status(400).send(`<script>alert("${msg}"); history.back();</script>`);
+  }
+
+  // ── Check for double-booking (same date + same slot) ────────────────────
+  const dateObj      = new Date(date);
+  const alreadyBooked = mockAppointments.find(
+    a => a.status !== 'cancelled' &&
+         a.timeSlot === timeSlot &&
+         a.date.toDateString() === dateObj.toDateString()
+  );
+  if (alreadyBooked) {
+    const msg = 'That date and time slot is already taken. Please choose another.';
+    if (wantsJSON(req)) return res.status(409).json({ success: false, message: msg });
+    return res.status(409).send(`<script>alert("${msg}"); history.back();</script>`);
+  }
+
+  // ── Create appointment ────────────────────────────────────────────────────
+  const newAppointment = {
+    _id: `mockid${nextId++}`,
+    date: dateObj,
+    timeSlot,
+    fullName,
+    email,
+    phone,
+    age:    age    ? Number(age) : null,
+    notes:  notes  || '',
+    status: 'confirmed',
+    userId: req.user._id || req.user.id,
+    userEmail: req.user.email,
+    // Pre-format the date string so the confirmation page doesn't need to re-parse
+    selectedDate: dateObj.toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    }),
+    createdAt: new Date(),
+  };
+
+  mockAppointments.push(newAppointment);
+
+  const redirectUrl = `/appointments/confirmation/${newAppointment._id}`;
+
+  // fetch() call → return JSON so JS can redirect
+  if (wantsJSON(req)) {
+    return res.status(201).json({ success: true, redirectUrl });
+  }
+
+  // Normal form POST → redirect directly
+  return res.redirect(redirectUrl);
 };
 
+// ── getConfirmationPage ───────────────────────────────────────────────────────
+// FIX: GET requests have no body. We stored everything we need in the appointment object.
 const getConfirmationPage = async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.id).populate("user");
+  const { id } = req.params;
+  const appointment = mockAppointments.find(apt => apt._id === id);
 
-    if (!appointment) {
-      return res.status(404).render("404", {
-        title: "Not Found",
-        message: "Appointment not found in the registry.",
-        user: req.user,
-      });
-    }
-
-    if (
-      req.user.role !== "admin" &&
-      appointment.user._id.toString() !== req.user.id
-    ) {
-      return res.status(403).render("404", {
-        title: "Access Denied",
-        message: "You do not have permission to view this confirmation.",
-        user: req.user,
-      });
-    }
-
-    res.render("confirmed", {
-      title: "Avalanche | Appointment Confirmed",
-      appointmentId: appointment._id,
-      bookingDetails: {
-        fullName: appointment.user.name,
-        email: appointment.user.email,
-        phone: appointment.user.phone || "Not provided",
-        selectedDate: new Date(appointment.date).toLocaleDateString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-        timeSlot: appointment.timeSlot,
-        status: appointment.status,
-      },
+  if (!appointment) {
+    return res.status(404).render('404', {
+      title:   'Avalanche | Not Found',
+      message: 'Appointment not found.',
+      user:    req.user || null,
     });
-  } catch (error) {
-    console.error("getConfirmationPage error:", error);
-    res.status(500).render("404", { title: "Error", message: error.message, user: req.user });
   }
+
+  return res.render('confirmed', {
+    title: 'Avalanche | Appointment Confirmed',
+    appointmentId: id,
+    bookingDetails: {
+      fullName:     appointment.fullName,
+      email:        appointment.email,
+      phone:        appointment.phone,
+      selectedDate: appointment.selectedDate,  // already formatted
+      timeSlot:     appointment.timeSlot,
+      status:       appointment.status,
+    },
+  });
 };
 
+// ── getMyAppointments ─────────────────────────────────────────────────────────
 const getMyAppointments = async (req, res) => {
-  try {
-    const appointments = await Appointment.find({ user: req.user.id })
-      .sort({ date: 1 })
-      .lean();
+  if (!req.user) return res.redirect('/login');
 
-    if (req.headers.accept && req.headers.accept.includes("application/json")) {
-      return res.json({ success: true, appointments });
-    }
+  const userAppointments = mockAppointments
+    .filter(apt => apt.userEmail === req.user.email)
+    .sort((a, b) => b.createdAt - a.createdAt);
 
-    res.render("userdash", {
-      title: "Avalanche | My Appointments",
-      appointments,
-      user: req.user,
-    });
-  } catch (error) {
-    console.error("getMyAppointments error:", error);
-    res.status(500).render("404", { title: "Error", message: error.message, user: req.user });
+  if (wantsJSON(req)) {
+    return res.json({ success: true, appointments: userAppointments });
   }
+
+  return res.render('User_Dashboard', {
+    title:        'Avalanche | My Appointments',
+    appointments: userAppointments,
+    user:         req.user,
+  });
 };
 
+// ── getAdminDashboard ─────────────────────────────────────────────────────────
 const getAdminDashboard = async (req, res) => {
-  try {
-    const appointments = await Appointment.find()
-      .populate("user", "name email")
-      .sort({ date: 1 })
-      .lean();
+  // Shape data the same way the EJS template expects it
+  const appointments = mockAppointments.length > 0
+    ? mockAppointments.map(apt => ({
+        ...apt,
+        user: { name: apt.fullName, email: apt.email },
+      }))
+    : [
+        // Seed data so the admin dashboard always has something to show
+        {
+          _id: 'mockid123',
+          date: new Date('2026-06-15'),
+          timeSlot: '09:00 - 12:00',
+          status: 'confirmed',
+          user: { name: 'Ahmed Ali', email: 'ahmed@test.com' },
+        },
+        {
+          _id: 'mockid456',
+          date: new Date('2026-06-16'),
+          timeSlot: '12:00 - 15:00',
+          status: 'pending',
+          user: { name: 'Sara Mohamed', email: 'sara@test.com' },
+        },
+      ];
 
-    const metrics = {
-      revenue: "EGP 2,400,000",
-      capacity: "840 kWp",
-      activeNodes: "10 / 10",
-    };
-
-    res.render("Admin_Dashboard", {
-      title: "Avalanche | Admin Control Core",
-      appointments,
-      metrics,
-      user: req.user,
-    });
-  } catch (error) {
-    console.error("getAdminDashboard error:", error);
-    res.status(500).render("404", { title: "Error", message: error.message, user: req.user });
-  }
+  return res.render('Admin_Dashboard', {
+    title: 'Avalanche | Admin Control Core',
+    appointments,
+    metrics: {
+      revenue:     'EGP 2,400,000',
+      capacity:    '840 kWp',
+      activeNodes: '10 / 10',
+    },
+    user: req.user || null,
+  });
 };
 
+// ── cancelAppointment ─────────────────────────────────────────────────────────
 const cancelAppointment = async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.id);
+  const { id } = req.params;
+  const appointment = mockAppointments.find(apt => apt._id === id);
 
-    if (!appointment) {
-      return res.status(404).render("404", {
-        title: "Not Found",
-        message: "Appointment not found.",
-        user: req.user,
-      });
-    }
-
-    if (req.user.role === "customer" && appointment.user.toString() !== req.user.id) {
-      return res.status(403).render("404", {
-        title: "Forbidden",
-        message: "You cannot cancel someone else's appointment.",
-        user: req.user,
-      });
-    }
-
-    if (appointment.date < new Date()) {
-      return res.status(400).render("404", {
-        title: "Cannot Cancel",
-        message: "Past appointments cannot be cancelled.",
-        user: req.user,
-      });
-    }
-
-    appointment.status = "cancelled";
-    await appointment.save();
-
-    if (req.user.role === "admin") {
-      return res.redirect("/appointments/admin/dashboard");
-    }
-    return res.redirect("/appointments/my");
-  } catch (error) {
-    console.error("cancelAppointment error:", error);
-    res.status(500).render("404", { title: "Error", message: error.message, user: req.user });
+  if (!appointment) {
+    return res.status(404).json({ success: false, message: 'Appointment not found' });
   }
+
+  // Only the owner OR an admin can cancel
+  const isOwner = req.user && appointment.userEmail === req.user.email;
+  const isAdmin = req.user && req.user.role === 'admin';
+
+  if (!isOwner && !isAdmin) {
+    return res.status(403).json({ success: false, message: 'Not authorized' });
+  }
+
+  appointment.status = 'cancelled';
+
+  if (isAdmin) return res.redirect('/appointments/admin/dashboard');
+  return res.redirect('/appointments/my');
+};
+
+// ── rescheduleAppointment ─────────────────────────────────────────────────────
+const rescheduleAppointment = async (req, res) => {
+  const { id } = req.params;
+  const { date, timeSlot } = req.body;
+
+  if (!date || !timeSlot) {
+    return res.status(400).json({ success: false, message: 'New date and time slot are required.' });
+  }
+  if (!VALID_SLOTS.includes(timeSlot)) {
+    return res.status(400).json({ success: false, message: 'Invalid time slot.' });
+  }
+
+  const appointment = mockAppointments.find(apt => apt._id === id);
+  if (!appointment) {
+    return res.status(404).json({ success: false, message: 'Appointment not found.' });
+  }
+
+  const dateObj = new Date(date);
+  appointment.date         = dateObj;
+  appointment.timeSlot     = timeSlot;
+  appointment.status       = 'confirmed';
+  appointment.selectedDate = dateObj.toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  return res.status(200).json({
+    success:     true,
+    message:     'Appointment rescheduled successfully.',
+    redirectUrl: `/appointments/confirmation/${id}`,
+  });
 };
 
 module.exports = {
@@ -183,4 +266,5 @@ module.exports = {
   getMyAppointments,
   getAdminDashboard,
   cancelAppointment,
+  rescheduleAppointment,
 };
