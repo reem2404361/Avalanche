@@ -10,8 +10,13 @@ router.post('/', auth, roleAuth('customer'), placeOrder);
 router.get('/my', auth, roleAuth('customer'), getMyOrders);
 
 // Admin routes
+<<<<<<< Updated upstream
 router.get('/', auth, roleAuth('admin' , 'superadmin'), getAllOrders);
 router.patch('/:id/status', auth, roleAuth('admin' , 'superadmin'), updateOrderStatus);
+=======
+router.get('/', auth, roleAuth('admin, superadmin'), getAllOrders);
+router.patch('/:id/status', auth, roleAuth('admin, superadmin'), updateOrderStatus);
+>>>>>>> Stashed changes
 
 // Admin & Customer
 router.get('/:id', auth, getOrderById);
