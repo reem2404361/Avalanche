@@ -68,7 +68,7 @@ function goToResults() {
    
     sessionStorage.setItem('solar_results', JSON.stringify(recommendationResults));
     
-    window.location.href = 'solution.html';
+    window.location.href = 'solution.ejs';
   })
   .catch(err => {
     console.error("Math engine connection error:", err);
