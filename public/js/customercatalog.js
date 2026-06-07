@@ -10,12 +10,15 @@ function loadDatabaseProducts() {
             return response.json();
         })
         .then(data => {
-            inventory = data.map(item => ({
+           
+            const rawProducts = Array.isArray(data) ? data : (data.products || data.data || []);
+
+            inventory = rawProducts.map(item => ({
                 id: item._id, 
                 category: item.category,
                 name: item.name,
                 price: Number(item.price), 
-                img: item.imageUrl,
+                img: item.imageUrl || 'https://via.placeholder.com/300', 
                 description: item.description || 'No description available.'
             }));
             renderInventory(); 
@@ -26,17 +29,18 @@ function loadDatabaseProducts() {
         });
 }
 
-
 function renderInventory() {
     const grid = document.getElementById('product-grid');
+    if (!grid) return;
     grid.innerHTML = '';
+    
     const filtered = activeFilter === 'all' ? inventory : inventory.filter(item => item.category === activeFilter);
     
     filtered.forEach(item => {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
-            <img src="${item.img}" class="prod-img">
+            <img src="${item.img}" class="prod-img" onerror="this.src='https://via.placeholder.com/300'">
             <div class="prod-info">
                 <div class="prod-name">${item.name}</div>
                 <div class="prod-price">EGP ${item.price.toLocaleString()}</div>
@@ -53,7 +57,6 @@ function renderInventory() {
 
 function addToCart(id) {
     const existingItem = cart.find(item => item.id === id);
-    
     if (existingItem) {
         existingItem.quantity += 1; 
     } else {
@@ -65,11 +68,15 @@ function addToCart(id) {
 
 function updateCartBadge() {
     const uniqueItemsCount = cart.length;
-    document.getElementById('cart-count').innerText = `${uniqueItemsCount} ${uniqueItemsCount === 1 ? 'ITEM' : 'ITEMS'}`;
+    const badge = document.getElementById('cart-count');
+    if (badge) {
+        badge.innerText = `${uniqueItemsCount} ${uniqueItemsCount === 1 ? 'ITEM' : 'ITEMS'}`;
+    }
 }
 
 function renderCartList() {
     const list = document.getElementById('cart-items-list');
+    if (!list) return;
     let total = 0;
     
     if (cart.length === 0) {
@@ -106,7 +113,6 @@ function renderCartList() {
     document.getElementById('cart-total').innerText = `EGP ${total.toLocaleString()}`;
 }
 
-
 function removeFromCart(id) {
     const itemIndex = cart.findIndex(item => item.id === id);
     if (itemIndex > -1) {
@@ -119,6 +125,7 @@ function removeFromCart(id) {
     updateCartBadge();
     renderCartList(); 
 }
+
 
 function completePurchase() {
     const name = document.getElementById('cust-name').value.trim();
@@ -146,8 +153,10 @@ function completePurchase() {
     document.getElementById('cust-address').value = '';
 }
 
+
 function toggleCart() {
     const overlay = document.getElementById('cart-overlay');
+    if (!overlay) return;
     overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
     if (overlay.style.display === 'flex') {
         renderCartList(); 
@@ -178,16 +187,23 @@ function filterBy(cat, el) {
     renderInventory();
 }
 
-document.getElementById('toggle-btn').addEventListener('click', () => {
-    document.querySelector('aside').classList.toggle('collapsed');
-    document.getElementById('main-content').classList.toggle('expanded-main');
-});
+
+const menuBtn = document.getElementById('toggle-btn');
+if (menuBtn) {
+    menuBtn.addEventListener('click', () => {
+        document.querySelector('aside').classList.toggle('collapsed');
+        document.getElementById('main-content').classList.toggle('expanded-main');
+    });
+}
+
 
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
-document.addEventListener('mousemove', e => {
-    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-    ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-});
+if (cursor && ring) {
+    document.addEventListener('mousemove', e => {
+        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+        ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    });
+}
 
 loadDatabaseProducts();
