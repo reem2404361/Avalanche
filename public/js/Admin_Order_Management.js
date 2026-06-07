@@ -19,17 +19,22 @@ document.addEventListener("mousemove", (e) => {
   ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
 });
 
-// Orders logic
+// Variables and constants
 const API_BASE = "/api/orders";
 const PAGE_SIZE = 10;
+const DOTS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <path d="M96 320C96 289.1 121.1 264 152 264C182.9 264 208 289.1 208 320C208 350.9 182.9 376 152 376C121.1 376 96 350.9 96 320zM264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320zM488 264C518.9 264 544 289.1 544 320C544 350.9 518.9 376 488 376C457.1 376 432 350.9 432 320C432 289.1 457.1 264 488 264z"/>
+</svg>`;
 
-let allOrders = [];
+let allOrders = []; // stores all orders fetched from backend
 let currentPage = 1;
-let activeFilter = "all"; // 'all' | 'pending' | 'approved'
+let activeFilter = "all"; // el options : all , pending , approved
 let searchQuery = "";
 let openMenuId = null; // which row's context menu is open
 
-// Helpers
+// Helper Functions
+
+// convert the backend ISO date to a more readable format
 function formatDate(isoString) {
   return new Date(isoString).toLocaleDateString("en-US", {
     month: "short",
@@ -38,6 +43,7 @@ function formatDate(isoString) {
   });
 }
 
+// Return a badge based on order status
 function statusBadge(status) {
   const map = {
     approved: '<div class="status approved">APPROVED</div>',
@@ -47,33 +53,17 @@ function statusBadge(status) {
   return map[status] || `<div class="status pending">${status}</div>`;
 }
 
-function solutionType(order) {
-  const name = order.items?.[0]?.product?.name || "—";
-  const alt =
-    name.toLowerCase().includes("aurora") ||
-    name.toLowerCase().includes("compact");
-  return `
-    <td class="solution-type${alt ? " different" : ""}">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-        <path d="M64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z"/>
-      </svg>
-      ${name}
-    </td>`;
-}
 
-const DOTS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-  <path d="M96 320C96 289.1 121.1 264 152 264C182.9 264 208 289.1 208 320C208 350.9 182.9 376 152 376C121.1 376 96 350.9 96 320zM264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320zM488 264C518.9 264 544 289.1 544 320C544 350.9 518.9 376 488 376C457.1 376 432 350.9 432 320C432 289.1 457.1 264 488 264z"/>
-</svg>`;
-
-//Context menu (approve / reject)
+// change order status menu (approve / reject / pend)
 function buildContextMenu(orderId, currentStatus) {
   const canApprove = currentStatus !== "approved";
   const canReject = currentStatus !== "rejected";
+  const canPend = currentStatus !== "pending";
   return `
     <div class="context-menu" id="menu-${orderId}">
-      ${canApprove ? `<button onclick="updateStatus('${orderId}', 'approved')">✔ Approve</button>` : ""}
-      ${canReject ? `<button onclick="updateStatus('${orderId}', 'rejected')">✖ Reject</button>` : ""}
-      <button onclick="viewOrder('${orderId}')">👁 View Details</button>
+      ${canApprove ? `<button onclick="updateStatus('${orderId}', 'approved')">Approve</button>` : ""}
+      ${canReject ? `<button onclick="updateStatus('${orderId}', 'rejected')">Reject</button>` : ""}
+      ${canPend ? `<button onclick="updateStatus('${orderId}', 'pending')">Pend</button>` : ""}
     </div>`;
 }
 
@@ -98,18 +88,14 @@ function toggleMenu(orderId, status) {
 
 // Close menu when clicking outside
 document.addEventListener("click", (e) => {
-  if (
-    openMenuId &&
-    !e.target.closest(".context-menu") &&
-    !e.target.closest(".dots-btn")
-  ) {
+  if (openMenuId && !e.target.closest(".context-menu") && !e.target.closest(".dots-btn")) {
     const menu = document.getElementById(`menu-${openMenuId}`);
     if (menu) menu.remove();
     openMenuId = null;
   }
 });
 
-// Status update 
+// Status update
 async function updateStatus(orderId, newStatus) {
   const menu = document.getElementById(`menu-${orderId}`);
   if (menu) menu.remove();
@@ -127,7 +113,7 @@ async function updateStatus(orderId, newStatus) {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `HTTP ${res.status}`);
+      throw new Error(err.message || `Error ${res.status}`);
     }
 
     // Update local data and re-render without a full reload
@@ -141,13 +127,7 @@ async function updateStatus(orderId, newStatus) {
   }
 }
 
-// View order detail (placeholder)
-function viewOrder(orderId) {
-  // TODO: navigate to a detail page or open a modal
-  alert("Order detail view coming soon for " + orderId);
-}
-
-// Filtering & searching 
+// Filtering & searching
 function getFilteredOrders() {
   return allOrders.filter((order) => {
     if (activeFilter !== "all" && order.status !== activeFilter) return false;
@@ -177,12 +157,12 @@ function renderTable() {
       </td></tr>`;
   } else {
     tbody.innerHTML = pageData
-      .map((order, idx) => {
-        const isLast = idx === pageData.length - 1;
+      .map((order, idx) => { // loops through every order 
+        const isLast = idx === pageData.length - 1; 
         const shortId = "#EG-" + String(order._id).slice(-5).toUpperCase();
         const location = order.shippingDetails?.deliveryAddress || "";
         const userName = order.user?.name || "—";
-
+        // for each order, we create a table row
         return `
         <tr${isLast ? ' class="last-in-page"' : ""}>
           <td class="order-cell">${shortId}</td>
@@ -190,7 +170,9 @@ function renderTable() {
             <div class="name">${userName}</div>
             <div class="location">${location}</div>
           </td>
-          ${solutionType(order)}
+          <td class="total-payment">
+            EGP ${(order.totalPrice || 0).toLocaleString()}
+          </td>
           <td>${statusBadge(order.status)}</td>
           <td class="date">${formatDate(order.createdAt)}</td>
           <td style="position:relative;">
@@ -212,7 +194,7 @@ function renderTable() {
   renderPagination(total);
 }
 
-// Pagination 
+// Pagination
 function renderPagination(total) {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const ul = document.querySelector(".table-footer ul");
@@ -259,7 +241,7 @@ function changePage(page) {
   renderTable();
 }
 
-// Stat cards 
+// Stat cards
 function updateStatCards() {
   const active = allOrders.filter((o) => o.status !== "rejected").length;
   const pending = allOrders.filter((o) => o.status === "pending").length;
@@ -284,7 +266,7 @@ function setStatusFilter(filter) {
   renderTable();
 }
 
-// Main fetch 
+// Main fetch
 async function loadOrders() {
   const tbody = document.querySelector(".table-box tbody");
   tbody.innerHTML = `
@@ -315,7 +297,7 @@ async function loadOrders() {
   }
 }
 
-//  Boot 
+//  Boot
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".status div[data-filter]").forEach((div) => {
     div.addEventListener("click", () => setStatusFilter(div.dataset.filter));

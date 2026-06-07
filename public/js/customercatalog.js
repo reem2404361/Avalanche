@@ -127,30 +127,73 @@ function removeFromCart(id) {
 }
 
 
-function completePurchase() {
-    const name = document.getElementById('cust-name').value.trim();
-    const email = document.getElementById('cust-email').value.trim();
-    const phone = document.getElementById('cust-phone').value.trim();
-    const address = document.getElementById('cust-address').value.trim();
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^01[0125][0-9]{8}$/;
+async function completePurchase() {
+  const name = document.getElementById('cust-name').value.trim();
+  const email = document.getElementById('cust-email').value.trim();
+  const phone = document.getElementById('cust-phone').value.trim();
+  const address = document.getElementById('cust-address').value.trim();
 
-    if (name.length < 8) return alert("Full Name must be at least 8 characters long.");
-    if (!emailRegex.test(email)) return alert("Please enter a valid email address.");
-    if (!phoneRegex.test(phone)) return alert("Please enter a valid phone number.");
-    if (address.length < 10) return alert("Please provide a more detailed delivery address.");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^01[0125][0-9]{8}$/;
 
-    alert(`Order Placed Successfully!\nThank you, ${name}. We will contact you at ${phone} shortly.`);
-    
+  if (name.length < 8) return alert("Full Name must be at least 8 characters long.");
+  if (!emailRegex.test(email)) return alert("Please enter a valid email address.");
+  if (!phoneRegex.test(phone)) return alert("Please enter a valid phone number.");
+  if (address.length < 10) return alert("Please provide a more detailed delivery address.");
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert("You must be logged in to place an order.");
+    location.href = '/login';
+    return;
+  }
+
+  // build items array — each item with its real MongoDB ID and quantity
+  const items = cart.map(item => ({
+    productId: item.id,
+    quantity: item.quantity
+  }));
+
+  try {
+    const response = await fetch('/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        items,
+        shippingDetails: {
+          fullName: name,
+          email,
+          phone,
+          deliveryAddress: address
+        }
+      })
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      alert(`Order failed: ${data.message}`);
+      return;
+    }
+
+    alert(`Order placed successfully! Thank you, ${name}. We will contact you at ${phone} shortly.`);
+
     cart = [];
     updateCartBadge();
     toggleCart();
-    
+
     document.getElementById('cust-name').value = '';
     document.getElementById('cust-email').value = '';
     document.getElementById('cust-phone').value = '';
     document.getElementById('cust-address').value = '';
+
+  } catch (err) {
+    console.error('Error placing order:', err);
+    alert('Something went wrong. Please try again.');
+  }
 }
 
 
