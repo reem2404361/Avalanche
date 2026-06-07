@@ -13,19 +13,9 @@ function isDbConnected() {
 
 const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign(
-<<<<<<< HEAD
     { id: user._id || user.id, role: user.role, email: user.email, name: user.name },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE || '7d' }
-=======
-    { id: user._id,
-     role: user.role 
-    },    // the payload (the data i actually wanna send in the token)
-    process.env.JWT_SECRET,               // the secret key used to sign the token (signature)
-    { 
-        expiresIn: process.env.JWT_EXPIRE 
-    } // the options (extra settings) (expiration time)
->>>>>>> 7fcf333a6ff27a5e5eb200099ba45b45b2ca79d2
   );
 
   res.status(statusCode).json({
@@ -127,13 +117,8 @@ const login = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
 const getProfile = async (req, res) => {
   res.status(200).json({ success: true, user: req.user });
 };
 
 module.exports = { signup, login, getProfile };
-=======
-
-module.exports = {signup, login};
->>>>>>> 7fcf333a6ff27a5e5eb200099ba45b45b2ca79d2
