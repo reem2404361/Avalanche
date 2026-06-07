@@ -12,9 +12,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+<<<<<<< HEAD
 app.engine('ejs', ejs.renderFile);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+=======
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
+app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/', require('./routes/pageRoutes'));
+>>>>>>> 7fcf333a6ff27a5e5eb200099ba45b45b2ca79d2
 
 if (process.env.MONGO_URI) {
   mongoose

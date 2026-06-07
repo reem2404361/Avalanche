@@ -8,7 +8,11 @@
       rel="stylesheet"
     />
     <title>Admin Catalog</title>
+<<<<<<< HEAD:views/admincatalog.ejs
     <link rel="stylesheet" href="/css/admincatalog.css" />
+=======
+    <link rel="stylesheet" href="../public/css/admincatalog.css" />
+>>>>>>> 7fcf333a6ff27a5e5eb200099ba45b45b2ca79d2:views/admincatalog.html
   </head>
 
   <body>
@@ -135,7 +139,11 @@
         <hr />
         <button
           class="side-btn logout"
+<<<<<<< HEAD:views/admincatalog.ejs
           onclick="location.href='/logout'"
+=======
+          onclick="location.href = 'Logout.html'"
+>>>>>>> 7fcf333a6ff27a5e5eb200099ba45b45b2ca79d2:views/admincatalog.html
         >
           <svg
             viewBox="0 0 24 24"
@@ -155,7 +163,6 @@
     </aside>
 
     <main class="admin-main" id="main-content">
-      <!-- NAV -->
       <nav>
         <div class="nav-left">Avalanche</div>
         <div class="nav-right">
@@ -232,7 +239,7 @@
       <div class="modal-content">
         <h2 id="modal-title">Edit Product</h2>
         <input type="text" id="p-name" placeholder="Product Name" />
-        <input type="text" id="p-price" placeholder="Price (e.g. 8,450)" />
+        <input type="text" id="p-price" placeholder="Price (e.g. 8450)" />
         <input type="number" id="p-stock" placeholder="Stock Quantity" />
         <select id="p-category">
           <option value="panels">Solar Panels</option>
@@ -240,6 +247,9 @@
           <option value="storage">Storage</option>
         </select>
         <input type="text" id="p-img" placeholder="Image URL" />
+        
+        <textarea id="p-description" placeholder="Product Specifications Description..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: var(--font-main); box-sizing: border-box; height: 80px; resize: none;"></textarea>
+        
         <button class="save-btn" onclick="saveProduct()">Save Product</button>
         <button
           onclick="closeModal()"
