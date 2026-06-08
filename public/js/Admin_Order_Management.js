@@ -200,7 +200,7 @@ function renderPagination(total) {
   const ul = document.querySelector(".table-footer ul");
   if (!ul) return;
 
-  const delta = 2;
+  const delta = 2; // two pages on left and 2 on right 
   const left = Math.max(2, currentPage - delta);
   const right = Math.min(totalPages - 1, currentPage + delta);
   const pages = [];
