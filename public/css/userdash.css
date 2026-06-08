@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-main);
   letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased; /* grayscale , cleaner text */
   background: var(--background);
 }
 
@@ -30,15 +30,15 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 9999; /*Places it above almost everything else on the page.*/
 
   width: 12px;
   height: 12px;
 
-  background: var(--cursor); /* sunlight color */
+  background: var(--cursor); 
   border-radius: 50%;
 
-  pointer-events: none;
+  pointer-events: none; /* stays clickable*/
   transform: translate(-50%, -50%);
 
   transition:
@@ -86,14 +86,14 @@ aside {
   color: var(--textlight);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-start; /*aligns on the top*/
   padding: 20px 20px;
   z-index: 500;
   transition:
     all 0.4s ease,
     padding 0.4s ease;
   position: relative;
-  overflow: hidden;
+  overflow: hidden;  /*Hides content that extends outside the element*/
 }
 
 aside.collapsed {
@@ -139,7 +139,7 @@ aside.collapsed .side-btn-text {
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0px 2px 4px var(--primary));
   font-size: 25px;
-  white-space: nowrap;
+  white-space: nowrap; /* text doesnt wrap to a new line*/
   transition:
     width 0.4s ease,
     opacity 0.3s ease;
@@ -262,12 +262,27 @@ aside ul {
   overflow-y: auto;
 }
 
+.page-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--surface);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
 .main-content h1 {
-  font-size: 2.4rem;
-  margin-bottom: 24px;
-  max-width: 600px;
-  line-height: 1.3;
-  text-shadow: 0 2px 4px rgba(13, 19, 33, 0.3);
+  font-size: 2rem;       
+  font-weight: 700;
+  color: var(--primary);  
+  line-height: 1.2;
+  text-shadow: none;
+  max-width: none;
+  margin-bottom: 0;
+}
+
+.page-header {
+  margin-bottom: 28px;   
 }
 
 .cards {
@@ -307,19 +322,6 @@ aside ul {
   justify-content: space-between;
 }
 
-#badge {
-  background: rgba(245, 166, 35, 0.15);
-  color: var(--cursor);
-  font-size: 9px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid rgba(245, 166, 35, 0.3);
-  white-space: nowrap;
-  width: fit-content;
-}
 
 .status-card p {
   opacity: 0.8;
@@ -632,4 +634,10 @@ aside ul {
   color: var(--textlight);
   opacity: 0.8;
   line-height: 1.5;
+}
+
+
+.cancel-action-card:hover {
+  background: #c0392b;
+  box-shadow: 0 0 15px rgba(192, 57, 43, 0.5);
 }
