@@ -743,3 +743,51 @@ aside.collapsed hr {
   left: 72px;
   width: calc(100% - 72px);
 }
+
+.dots-btn {
+  background: none;
+  border: none;
+  cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.context-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  box-shadow: 0 4px 16px rgba(13, 19, 33, 0.15);
+  border: 1px solid rgba(62, 92, 118, 0.12);
+  border-radius: 8px;
+  z-index: 200;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: var(--font-main);
+  font-size: 13px;
+  color: var(--secondary);
+  cursor: none;
+  transition: background 0.15s;
+}
+
+.context-menu button:hover {
+  background: rgba(116, 140, 171, 0.1);
+}
+
+.table-box .rejected {
+  background: rgba(231, 76, 60, 0.1);
+  color: #922b21;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}

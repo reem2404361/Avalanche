@@ -10,8 +10,8 @@ router.post('/', auth, roleAuth('customer'), placeOrder);
 router.get('/my', auth, roleAuth('customer'), getMyOrders);
 
 // Admin routes
-router.get('/', auth, roleAuth('admin'), getAllOrders);
-router.patch('/:id/status', auth, roleAuth('admin'), updateOrderStatus);
+router.get('/', auth, roleAuth('admin' , 'superadmin'), getAllOrders);
+router.patch('/:id/status', auth, roleAuth('admin' , 'superadmin'), updateOrderStatus);
 
 // Admin & Customer
 router.get('/:id', auth, getOrderById);
