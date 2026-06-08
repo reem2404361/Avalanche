@@ -297,8 +297,8 @@ async function loadOrders() {
   }
 }
 
-//  Boot
-document.addEventListener("DOMContentLoaded", () => {
+// when page loads 
+document.addEventListener("DOMContentLoaded", () => { // waits untill the page fully loaded then run code 
   document.querySelectorAll(".status div[data-filter]").forEach((div) => {
     div.addEventListener("click", () => setStatusFilter(div.dataset.filter));
   });
