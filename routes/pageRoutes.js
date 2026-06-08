@@ -50,12 +50,13 @@ router.get('/userdash', auth, async (req, res) => {
       approved: 1,
     };
 
-    let activeStep = 0;
-    if (dashType === 'installation' && appointment) {
-      activeStep = installationStepMap[appointment.status] ?? 0;
-    } else if (dashType === 'order' && order) {
-      activeStep = orderStepMap[order.status] ?? 0;
-    }
+   let activeStep = -1; // -1 = nothing active (no orders)
+
+if (dashType === 'installation' && appointment) {
+  activeStep = installationStepMap[appointment.status] ?? 0;
+} else if (dashType === 'order' && order) {
+  activeStep = orderStepMap[order.status] ?? 0;
+}
 
     res.render('User_Dashboard', {
       title:       'Avalanche | Dashboard',
