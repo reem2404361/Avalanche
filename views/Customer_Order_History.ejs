@@ -34,7 +34,7 @@
         <li>
           <button
             class="side-btn dashboard"
-            onclick="location.href='/userdash'"
+            onclick="location.href = '/userdash'"
           >
             <svg
               width="24"
@@ -125,7 +125,7 @@
 
       <div class="side-bottom">
         <hr />
-        <button class="side-btn logout" onclick="location.href='/logout'">
+        <button class="side-btn logout" onclick="location.href = '/logout'">
           <svg
             viewBox="0 0 24 24"
             width="24"
@@ -155,15 +155,17 @@
         </div>
         <div class="Investments">
           <h3>Total Investment</h3>
-          <h2>EGP 42,850.00</h2>
+          <h2 id="total-investment">EGP 0.00</h2>
         </div>
       </div>
 
       <div class="filter-bar">
         <div class="righ-part">
-          <div class="option" id="current-option">All Orders</div>
-          <div class="option">Hardware</div>
-          <div class="option">Maintenance</div>
+          <div class="option" id="current-option" data-filter="all">
+            All Orders
+          </div>
+          <div class="option" data-filter="hardware">Hardware</div>
+          <div class="option" data-filter="maintenance">Maintenance</div>
         </div>
         <div class="left-part">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
@@ -175,190 +177,7 @@
         </div>
       </div>
 
-      <div class="order-card">
-        <div class="icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-            <path
-              d="M153.8 96C123.8 96 97.8 116.8 91.3 146.1L41.6 370.1C32.7 410.1 63.1 448 104 448L288.1 448L288.1 512L224.1 512C206.4 512 192.1 526.3 192.1 544C192.1 561.7 206.4 576 224.1 576L416.1 576C433.8 576 448.1 561.7 448.1 544C448.1 526.3 433.8 512 416.1 512L352.1 512L352.1 448L536.2 448C577.1 448 607.6 410.1 598.7 370.1L548.9 146.1C542.4 116.8 516.5 96 486.5 96L153.8 96zM277.6 160L362.8 160L370.1 248L270.3 248L277.6 160zM222.1 248L134.3 248L153.9 160L229.5 160L222.2 248zM123.6 296L218.1 296L210.8 384L104.1 384L123.7 296zM266.2 296L374 296L381.3 384L258.8 384L266.1 296zM422.2 296L516.7 296L536.3 384L429.6 384L422.3 296zM506 248L418.2 248L410.9 160L486.5 160L506.1 248z"
-            />
-          </svg>
-        </div>
-        <div class="card-content">
-          <div class="order-info">
-            <div class="order-type" id="type-diff">Hardware</div>
-            <div class="order-id">ID: SOL-99281-PR</div>
-          </div>
-          <h2>Editorial Solar Array — Series X</h2>
-          <p>
-            Full system installation including 24 hyper-efficient panels and
-            10kWh storage unit.
-          </p>
-        </div>
-        <div class="date">
-          <h4>Placed On</h4>
-          <p>MAR 20 , 2026</p>
-        </div>
-
-        <div class="amount">
-          <h4>Amount</h4>
-          <p>EGP 38,500.00</p>
-        </div>
-
-        <div class="status">
-          <h4>Status</h4>
-          <p class="completed">Completed</p>
-        </div>
-
-        <div class="invoice">
-          <button class="invoice-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="200"
-              height="200"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="none"
-                stroke="#000000"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5l5-5m-5-7v12"
-              />
-            </svg>
-            Invoice
-          </button>
-        </div>
-      </div>
-
-      <div class="order-card">
-        <div class="icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="200"
-            height="200"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="none"
-              stroke="#000000"
-              stroke-width="2"
-              d="M12 22S3 18 3 5l9-3l9 3c0 13-9 17-9 17ZM4 11h16m-8-9v20"
-            />
-          </svg>
-        </div>
-        <div class="card-content">
-          <div class="order-info">
-            <div class="order-type">Maintenance</div>
-            <div class="order-id">ID: SVC-22104-MN</div>
-          </div>
-          <h2>Annual Efficiency Optimization</h2>
-          <p>
-            Comprehensive cleaning, panel health check, and firmware
-            calibration.
-          </p>
-        </div>
-        <div class="date">
-          <h4>Placed On</h4>
-          <p>Apr 10 , 2026</p>
-        </div>
-
-        <div class="amount">
-          <h4>Amount</h4>
-          <p>EGP 450.00</p>
-        </div>
-
-        <div class="status">
-          <h4>Status</h4>
-          <p class="processing">Processing</p>
-        </div>
-
-        <div class="invoice">
-          <button class="invoice-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="200"
-              height="200"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="none"
-                stroke="#000000"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5l5-5m-5-7v12"
-              />
-            </svg>
-            Invoice
-          </button>
-        </div>
-      </div>
-
-      <div class="order-card">
-        <div class="icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="200"
-            height="200"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="none"
-              stroke="#000000"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 3v7h6l-8 11v-7H5l8-11"
-            />
-          </svg>
-        </div>
-        <div class="card-content">
-          <div class="order-info">
-            <div class="order-type" id="type-diff">Upgrade</div>
-            <div class="order-id">ID: UPG-55012-BT</div>
-          </div>
-          <h2>Secondary Storage Expansion</h2>
-          <p>
-            Additional 5kWh battery module for extended night-cycle autonomy.
-          </p>
-        </div>
-        <div class="date">
-          <h4>Placed On</h4>
-          <p>Feb 05 , 2026</p>
-        </div>
-
-        <div class="amount">
-          <h4>Amount</h4>
-          <p>EGP 3,900.00</p>
-        </div>
-
-        <div class="status">
-          <h4>Status</h4>
-          <p class="completed">Completed</p>
-        </div>
-
-        <div class="invoice">
-          <button class="invoice-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="200"
-              height="200"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="none"
-                stroke="#000000"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5l5-5m-5-7v12"
-              />
-            </svg>
-            Invoice
-          </button>
-        </div>
-      </div>
+      <div id="orders-container"></div>
 
       <div class="bottom-cards">
         <div class="expansion">
@@ -381,25 +200,6 @@
       </div>
     </main>
 
-    <script>
-      const toggleBtn = document.getElementById("toggle-btn");
-      const sidebar = document.querySelector("aside");
-      const mainContent = document.querySelector(".main-content");
-
-      toggleBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("collapsed");
-        mainContent.classList.toggle("expanded-main");
-      });
-
-      const cursor = document.getElementById("cursor");
-      const ring = document.getElementById("cursor-ring");
-
-      document.addEventListener("mousemove", (e) => {
-        const x = e.clientX;
-        const y = e.clientY;
-        cursor.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-        ring.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-      });
-    </script>
+    <script src="/js/Customer_Order_History.js"></script>
   </body>
 </html>
