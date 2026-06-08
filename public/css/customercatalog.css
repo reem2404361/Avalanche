@@ -521,3 +521,34 @@ aside.collapsed .side-btn-text {
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
+
+
+.buy-btn {
+    background: transparent !important;
+    color: var(--primary, #0d1321);
+    border: 1.5px solid var(--primary, #0d1321);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: none;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.buy-btn:hover {
+    background: var(--primary, #0d1321) !important;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(13, 19, 33, 0.15);
+}
+
+
+.step-control-btn:hover {
+    background: rgba(116, 140, 171, 0.15) !important;
+    border-radius: 50%;
+}
+
+.cart-inline-stepper button:hover {
+    background: rgba(13, 19, 33, 0.08) !important;
+    border-radius: 50%;
+}

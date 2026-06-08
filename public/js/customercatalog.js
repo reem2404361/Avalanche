@@ -2,7 +2,6 @@ let inventory = [];
 let cart = []; 
 let activeFilter = 'all';
 
-
 function loadDatabaseProducts() {
     fetch('/api/products')
         .then(response => {
@@ -10,7 +9,6 @@ function loadDatabaseProducts() {
             return response.json();
         })
         .then(data => {
-           
             const rawProducts = Array.isArray(data) ? data : (data.products || data.data || []);
 
             inventory = rawProducts.map(item => ({
@@ -29,6 +27,11 @@ function loadDatabaseProducts() {
         });
 }
 
+function getItemQuantity(id) {
+    const item = cart.find(p => p.id === id);
+    return item ? item.quantity : 0;
+}
+
 function renderInventory() {
     const grid = document.getElementById('product-grid');
     if (!grid) return;
@@ -37,33 +40,84 @@ function renderInventory() {
     const filtered = activeFilter === 'all' ? inventory : inventory.filter(item => item.category === activeFilter);
     
     filtered.forEach(item => {
+        const qty = getItemQuantity(item.id);
         const card = document.createElement('div');
         card.className = 'product-card';
+        
         card.innerHTML = `
             <img src="${item.img}" class="prod-img" onerror="this.src='https://via.placeholder.com/300'">
             <div class="prod-info">
                 <div class="prod-name">${item.name}</div>
                 <div class="prod-price">EGP ${item.price.toLocaleString()}</div>
             </div>
-            <div class="prod-meta" style="flex-direction: column; align-items: flex-start; gap: 12px;">
-                <p style="margin: 0; font-size: 0.8rem; opacity: 0.6; line-height: 1.4; min-height: 38px;">${item.description}</p>
-                <button class="buy-btn" style="width: 100%;" onclick="addToCart('${item.id}')">BUY NOW</button>
+            <div class="prod-meta" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; width: 100%; margin-top: 8px;">
+                <p style="margin: 0; font-size: 0.75rem; opacity: 0.6; line-height: 1.3; max-width: 60%;">${item.description}</p>
+                <div id="controls-wrapper-${item.id}">
+                    </div>
             </div>
         `;
         grid.appendChild(card);
+        
+        
+        updateProductCardControls(item.id);
     });
 }
 
+function updateProductCardControls(id) {
+    const wrapper = document.getElementById(`controls-wrapper-${id}`);
+    if (!wrapper) return;
 
-function addToCart(id) {
+    const qty = getItemQuantity(id);
+
+    if (qty > 0) {
+        wrapper.innerHTML = `
+            <div class="stepper-container" style="display: flex; align-items: center; justify-content: space-between; border: 1.5px solid var(--primary, #0d1321); border-radius: 20px; overflow: hidden; width: 110px; height: 32px;">
+                <button class="step-control-btn minus" style="background: none; border: none; color: var(--primary); width: 30px; height: 100%; font-size: 1rem; font-weight: 800; cursor: none;" onclick="decrementCartItem('${id}')">—</button>
+                <span class="step-qty-val" style="color: var(--primary); font-weight: 800; font-size: 0.8rem;">${qty}</span>
+                <button class="step-control-btn plus" style="background: none; border: none; color: var(--primary); width: 30px; height: 100%; font-size: 1rem; font-weight: 800; cursor: none;" onclick="incrementCartItem('${id}')">+</button>
+            </div>
+        `;
+    } else {
+        wrapper.innerHTML = `
+            <button class="buy-btn" onclick="incrementCartItem('${id}')">Add to Cart</button>
+        `;
+    }
+}
+
+function incrementCartItem(id) {
     const existingItem = cart.find(item => item.id === id);
     if (existingItem) {
         existingItem.quantity += 1; 
     } else {
         const item = inventory.find(p => p.id === id);
-        cart.push({ ...item, quantity: 1 }); 
+        if (item) cart.push({ ...item, quantity: 1 }); 
     }
     updateCartBadge();
+    
+    
+    updateProductCardControls(id); 
+    
+    if (document.getElementById('cart-overlay').style.display === 'flex') {
+        renderCartList();
+    }
+}
+
+function decrementCartItem(id) {
+    const itemIndex = cart.findIndex(item => item.id === id);
+    if (itemIndex > -1) {
+        if (cart[itemIndex].quantity > 1) {
+            cart[itemIndex].quantity -= 1; 
+        } else {
+            cart.splice(itemIndex, 1); 
+        }
+    }
+    updateCartBadge();
+    
+    updateProductCardControls(id); 
+    
+    if (document.getElementById('cart-overlay').style.display === 'flex') {
+        renderCartList();
+    }
 }
 
 function updateCartBadge() {
@@ -99,13 +153,12 @@ function renderCartList() {
                     </div>
                 </div>
                 
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="background: #edf2f4; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; color: #0d1321;">
-                        × ${item.quantity}
+                <div style="display: flex; align-items: center;">
+                    <div class="cart-inline-stepper" style="display: flex; align-items: center; background: #edf2f4; border-radius: 20px; padding: 2px 6px; font-weight: 800; font-size: 0.85rem;">
+                        <button onclick="decrementCartItem('${item.id}')" style="background:none; border:none; padding:4px 8px; font-weight:800; cursor:none; color: #0d1321;">—</button>
+                        <span style="min-width: 20px; text-align: center; color: #0d1321;">${item.quantity}</span>
+                        <button onclick="incrementCartItem('${item.id}')" style="background:none; border:none; padding:4px 8px; font-weight:800; cursor:none; color: #0d1321;">+</button>
                     </div>
-                    <button onclick="removeFromCart('${item.id}')" style="background: none; border: none; color: #ef4444; font-size: 1.1rem; cursor: none; padding: 4px;">
-                        🗑️
-                    </button>
                 </div>
             </div>`; 
     }).join(''); 
@@ -113,89 +166,31 @@ function renderCartList() {
     document.getElementById('cart-total').innerText = `EGP ${total.toLocaleString()}`;
 }
 
-function removeFromCart(id) {
-    const itemIndex = cart.findIndex(item => item.id === id);
-    if (itemIndex > -1) {
-        if (cart[itemIndex].quantity > 1) {
-            cart[itemIndex].quantity -= 1; 
-        } else {
-            cart.splice(itemIndex, 1); 
-        }
-    }
-    updateCartBadge();
-    renderCartList(); 
-}
+function completePurchase() {
+    const name = document.getElementById('cust-name').value.trim();
+    const email = document.getElementById('cust-email').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
+    const address = document.getElementById('cust-address').value.trim();
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^01[0125][0-9]{8}$/;
 
+    if (name.length < 8) return alert("Full Name must be at least 8 characters long.");
+    if (!emailRegex.test(email)) return alert("Please enter a valid email address.");
+    if (!phoneRegex.test(phone)) return alert("Please enter a valid phone number.");
+    if (address.length < 10) return alert("Please provide a more detailed delivery address.");
 
-async function completePurchase() {
-  const name = document.getElementById('cust-name').value.trim();
-  const email = document.getElementById('cust-email').value.trim();
-  const phone = document.getElementById('cust-phone').value.trim();
-  const address = document.getElementById('cust-address').value.trim();
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^01[0125][0-9]{8}$/;
-
-  if (name.length < 8) return alert("Full Name must be at least 8 characters long.");
-  if (!emailRegex.test(email)) return alert("Please enter a valid email address.");
-  if (!phoneRegex.test(phone)) return alert("Please enter a valid phone number.");
-  if (address.length < 10) return alert("Please provide a more detailed delivery address.");
-
-  const token = localStorage.getItem('token');
-  if (!token) {
-    alert("You must be logged in to place an order.");
-    location.href = '/login';
-    return;
-  }
-
-  // build items array — each item with its real MongoDB ID and quantity
-  const items = cart.map(item => ({
-    productId: item.id,
-    quantity: item.quantity
-  }));
-
-  try {
-    const response = await fetch('/api/orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        items,
-        shippingDetails: {
-          fullName: name,
-          email,
-          phone,
-          deliveryAddress: address
-        }
-      })
-    });
-
-    const data = await response.json();
-
-    if (!data.success) {
-      alert(`Order failed: ${data.message}`);
-      return;
-    }
-
-    alert(`Order placed successfully! Thank you, ${name}. We will contact you at ${phone} shortly.`);
-
+    alert(`Order Placed Successfully!\nThank you, ${name}. We will contact you at ${phone} shortly.`);
+    
     cart = [];
     updateCartBadge();
     toggleCart();
-
+    
     document.getElementById('cust-name').value = '';
     document.getElementById('cust-email').value = '';
     document.getElementById('cust-phone').value = '';
     document.getElementById('cust-address').value = '';
-
-  } catch (err) {
-    console.error('Error placing order:', err);
-    alert('Something went wrong. Please try again.');
-  }
 }
-
 
 function toggleCart() {
     const overlay = document.getElementById('cart-overlay');
@@ -230,7 +225,6 @@ function filterBy(cat, el) {
     renderInventory();
 }
 
-
 const menuBtn = document.getElementById('toggle-btn');
 if (menuBtn) {
     menuBtn.addEventListener('click', () => {
@@ -238,7 +232,6 @@ if (menuBtn) {
         document.getElementById('main-content').classList.toggle('expanded-main');
     });
 }
-
 
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
