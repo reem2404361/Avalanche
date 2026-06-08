@@ -9,7 +9,7 @@
 </head>
 <body>
     <div id="cursor"></div>
-    <div id="cursor-ring"></div>
+    <div id="cursor-ring"></div> 
 
     <div class="container">
         <div class="logo">
@@ -21,11 +21,6 @@
             <h2>Login to your account</h2>
             <p>Welcome back! Please enter your credentials to access your account.</p>
 
-            <!-- Error Banner -->
-            <div id="errorBanner" class="error-banner" style="display: none; background: #e63946; color: white; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                <span id="errorText"></span>
-                <button type="button" onclick="document.getElementById('errorBanner').style.display='none'" style="float: right; background: none; border: none; color: white; cursor: pointer; font-size: 18px;">×</button>
-            </div>
 
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <label>Email Address:</label>
@@ -47,6 +42,9 @@
                 <span id="pwError" style="color: red; font-size: 12px;"></span>
 
                 <button type="submit" id="loginBtn">Sign In →</button>
+                <p id="errorBanner" style="display:none; color:#e63946; font-size:13px; margin-top:8px; text-align:center;">
+                <span id="errorText"></span>
+                </p>
             </form>
             <p class="signup">
                 Don't have an account? <a href="/signup">Sign up</a>

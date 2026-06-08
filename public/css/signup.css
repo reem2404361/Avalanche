@@ -177,6 +177,7 @@ justify-content: center;
 
 #togglePw:hover {
   color: var(--accent);
+  box-shadow: none; 
 }
   
 .cpw-wrap {
@@ -206,6 +207,7 @@ justify-content: center;
 
 #toggleCpw:hover {
   color: var(--accent);
+  box-shadow: none; 
 }
 
 label {

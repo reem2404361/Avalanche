@@ -1,28 +1,18 @@
 const jwt  = require('jsonwebtoken');
-
-// ── Mock users store (used when MongoDB is not connected) ─────────────────────
-const mockUsers = [];
-let mockIdCounter = 1;
-
-function isDbConnected() {
-  try {
-    const mongoose = require('mongoose');
-    return mongoose.connection.readyState === 1;
-  } catch (_) { return false; }
-}
+const User = require('../models/User');
 
 const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign(
-    { id: user._id || user.id, role: user.role, email: user.email, name: user.name },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE || '7d' }
+    { id: user._id || user.id, role: user.role, email: user.email, name: user.name }, // the payload (the data i actually wanna send in the token)
+    process.env.JWT_SECRET, // the secret key used to sign the token (signature)
+    { expiresIn: process.env.JWT_EXPIRE } // the options (extra settings) (expiration time)
   );
 
   res.status(statusCode).json({
     success: true,
     token,
     user: {
-      id:       user._id || user.id,
+      id:       user._id ,
       name:     user.name,
       email:    user.email,
       role:     user.role,
@@ -32,88 +22,86 @@ const sendTokenResponse = (user, statusCode, res) => {
   });
 };
 
-// ── SIGNUP ────────────────────────────────────────────────────────────────────
+
 const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide name, email and password' });
+      return res.status(400).json({
+         success: false, 
+         message: 'Please provide name, email and password' 
+        });
     }
 
-    if (isDbConnected()) {
-      const User = require('../models/User');
+
+    // checks if a user with the same email already exists in the database
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ success: false, message: 'An account with this email already exists' });
+        return res.status(400).json({
+           success: false,
+            message: 'An account with this email already exists'
+           });
       }
-      const user = await User.create({ name, email, password });
-      return sendTokenResponse(user, 201, res);
+      const user = await User.create({ 
+        name, 
+        email,
+        password
+       });
+
+      return sendTokenResponse(user, 201, res); // 201 = something was created
+    
+
+  
+  }     catch(err){
+        console.error(err);
+
+        res.status(500).json(
+        { 
+            success: false, 
+            message: 'Server error'
+        });
     }
-
-    // ── No-DB mock mode ──
-    const exists = mockUsers.find(u => u.email === email.toLowerCase());
-    if (exists) {
-      return res.status(400).json({ success: false, message: 'An account with this email already exists' });
-    }
-
-    const bcrypt = require('bcrypt');
-    const hashedPw = await bcrypt.hash(password, 10);
-
-    const newUser = {
-      _id:      `mockuser${mockIdCounter++}`,
-      name,
-      email:    email.toLowerCase(),
-      password: hashedPw,
-      role:     'customer',
-    };
-    mockUsers.push(newUser);
-
-    return sendTokenResponse(newUser, 201, res);
-
-  } catch (err) {
-    console.error('Signup error:', err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
 };
 
-// ── LOGIN ─────────────────────────────────────────────────────────────────────
+
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide email and password' });
-    }
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide email and password'
+            });
+        }
 
-    if (isDbConnected()) {
-      const User = require('../models/User');
       const user = await User.findOne({ email }).select('+password');
-      if (!user) return res.status(400).json({ success: false, message: 'Invalid credentials' });
+
+      if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid credentials' //no hints for security
+            });
+        }
+
       const isMatch = await user.comparePassword(password);
-      if (!isMatch) return res.status(400).json({ success: false, message: 'Invalid credentials' });
-      return sendTokenResponse(user, 200, res);
+      if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+      return sendTokenResponse(user, 200, res); // 200 = success
     }
 
-    // ── No-DB mock mode ──
-    const bcrypt = require('bcrypt');
-    const user = mockUsers.find(u => u.email === email.toLowerCase());
-
-    // Allow a hardcoded admin for testing
-    if (email === 'admin@avalanche.eg' && password === 'Admin1234') {
-      const adminUser = { _id: 'adminmock001', name: 'Admin', email: 'admin@avalanche.eg', role: 'admin' };
-      return sendTokenResponse(adminUser, 200, res);
-    }
-
-    if (!user) return res.status(400).json({ success: false, message: 'Invalid credentials' });
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ success: false, message: 'Invalid credentials' });
-
-    return sendTokenResponse(user, 200, res);
-
-  } catch (err) {
+   catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ 
+      success: false, message: 'Server error' 
+    });
   }
 };
 

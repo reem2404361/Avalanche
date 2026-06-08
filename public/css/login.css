@@ -191,6 +191,7 @@ input {
 
 #togglePw:hover {
   color: var(--accent);
+  box-shadow: none; 
 }
 
 

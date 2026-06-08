@@ -104,4 +104,4 @@ userSchema.methods.comparePassword = async function (enteredPassword) { // takes
     return await bcrypt.compare(enteredPassword, this.password); // compares the entered password with the hashed password and returns true if they match, false otherwise
 };
 
-module.exports = mongoose.model('User', userSchema); // exports the user model based on the defined schema
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);

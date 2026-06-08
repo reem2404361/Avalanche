@@ -1,11 +1,13 @@
 const express  = require('express');
 const router   = express.Router();
-const { getProfile, updateProfile, getAllUsers } = require('../controllers/userController');
+
+const { getProfile, updateProfile, updatePassword, deleteProfile } = require('../controllers/userController');
 const { auth } = require('../middleware/auth');
-const roleAuth = require('../middleware/roleAuth');
+
 
 router.get('/me',     auth, getProfile);
 router.put('/update', auth, updateProfile);
-router.get('/',       auth, roleAuth('admin', 'superadmin'), getAllUsers);
+router.put('/me/password', auth, updatePassword);
+router.delete('/delete', auth, deleteProfile);
 
 module.exports = router;
