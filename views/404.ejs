@@ -4,19 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= typeof title !== 'undefined' ? title : "Avalanche | 404" %></title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght=300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/404.css">
 </head>
 <body>
-    <div class="error-container">
-        <h1 class="error-code">404</h1>
-        <div class="error-title">System Out of Bounds</div>
-        <p class="error-msg">
-            <%= typeof message !== 'undefined' ? message : "The page you requested does not exist on the network grid." %>
+
+    <div class="error-wrapper">
+        <span class="error-tag">Error 404</span>
+        <h1 class="error-title">Lost in the Dunes</h1>
+        <p class="error-description">
+            <%= typeof message !== 'undefined' ? message : "The page you're looking for has been reclaimed by the sands." %>
         </p>
-        <%# Redirect admin to their dashboard, customers to userdash -%>
-        <a href="<%= (typeof user !== 'undefined' && user && user.role === 'admin') ? '/appointments/admin/dashboard' : '/userdash' %>"
-           class="home-btn">Return to Console</a>
+        
+        <p style="font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; opacity: 0.5; color: var(--primary); margin-top: 10px;">
+            REDIRECTING TO THE LANDING PAGE <span id="countdown">5</span>s...
+        </p>
     </div>
+
+    <div class="footer-brand">AVALANCHE SOLAR</div>
+
+    <script>
+        // Automatic safety escape route logic
+        let count = 5;
+        const counterElement = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            count--;
+            if (counterElement) counterElement.innerText = count;
+            
+            if (count <= 0) {
+                clearInterval(timer);
+                window.location.href = '/'; 
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
