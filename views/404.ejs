@@ -4,43 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= typeof title !== 'undefined' ? title : "Avalanche | 404" %></title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: #0d1321;
-            color: #edf2f4;
-            font-family: 'Manrope', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .error-container { text-align: center; padding: 40px; }
-        .error-code {
-            font-size: 8rem; font-weight: 800; color: #e63946;
-            margin: 0; line-height: 1; letter-spacing: -2px;
-        }
-        .error-title {
-            font-size: 1.8rem; font-weight: 700;
-            margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .error-msg {
-            color: #748cab; max-width: 420px;
-            margin: 0 auto 30px; font-size: 0.95rem; line-height: 1.6;
-        }
-        .home-btn {
-            background: #ffb703; color: #0d1321;
-            border: none; padding: 15px 35px; border-radius: 12px;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 700; text-transform: uppercase;
-            font-size: 0.8rem; letter-spacing: 1px;
-            text-decoration: none; display: inline-block;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .home-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,183,3,0.3); }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght=300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/404.css">
 </head>
 <body>
     <div class="error-container">

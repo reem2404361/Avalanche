@@ -33,10 +33,13 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    age: {
-      type: Number,
-      min: 18,
-      max: 100,
+    address: {
+      type: String,
+      required: true,
+    },
+    location: {
+      type: String,
+      default: "",
     },
     notes: {
       type: String,
@@ -44,8 +47,8 @@ const appointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "completed", "cancelled"],
-      default: "confirmed",
+      enum: ["pending", "approved", "completed", "cancelled"],
+      default: "pending",
     },
   },
   { timestamps: true }

@@ -7,9 +7,90 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght=300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/dashb.css">
+    <style>
+        .dashboard-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            font-family: 'Manrope', sans-serif;
+            margin-bottom: 40px;
+        }
+        @media (min-width: 992px) {
+            .dashboard-grid { flex-direction: row; }
+        }
+        .map-column {
+            flex: 100%;
+            min-width: 0;
+            transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .info-column {
+            flex: 0;
+            min-width: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .dashboard-grid.card-open .info-column {
+            opacity: 1;
+            visibility: visible;
+        }
+        @media (min-width: 992px) {
+            .dashboard-grid.card-open .map-column { flex: 2; }
+            .dashboard-grid.card-open .info-column { flex: 1; min-width: 320px; }
+        }
+        #live-map {
+            height: 500px;
+            width: 100%;
+            border-radius: 24px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+            background: #0d1321;
+            z-index: 1;
+        }
+        .main-display-card {
+            background: #0d1321;
+            color: #edf2f4;
+            border-radius: 24px;
+            padding: 25px;
+            height: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-sizing: border-box;
+        }
+        .data-field {
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        .data-label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffb703;
+            margin-bottom: 4px;
+        }
+        .data-value { font-size: 0.95rem; font-weight: 600; }
+        .map-static-dot { box-shadow: 0 0 12px rgba(255, 183, 3, 0.8); }
+        .btn-action-cancel {
+            background: #e63946; color: white; border: none; padding: 6px 14px;
+            border-radius: 8px; font-family: 'Manrope', sans-serif; font-weight: 700;
+            font-size: 0.8rem; cursor: pointer; transition: background 0.2s ease;
+        }
+        .btn-action-cancel:hover { background: #b32430; }
+        .btn-action-approve {
+            background: #10b981; color: white; border: none; padding: 6px 14px;
+            border-radius: 8px; font-family: 'Manrope', sans-serif; font-weight: 700;
+            font-size: 0.8rem; cursor: pointer; transition: background 0.2s ease;
+        }
+        .btn-action-approve:hover { background: #059669; }
+        .txt-cancelled-label { color: #a3a3a3; font-style: italic; font-weight: 600; }
+        .status-rejected { color: #e63946; font-weight: 800; font-size: 0.75rem; letter-spacing: 1px; }
+        .action-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
-
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
@@ -56,7 +137,7 @@
             </button>
         </li>
         <li>
-            <button class="side-btn appointments" onclick="location.href='/Admin_calendar'">
+            <button class="side-btn appointments" onclick="location.href='/scheduler'">
                 <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -82,43 +163,6 @@
 </aside>
 
 <main class="admin-main" id="main-content">
-
-    <nav>
-        <div class="nav-left">Avalanche</div>
-        <div class="nav-right">
-            <button onclick="document.getElementById('p-up').click()" class="upload-btn">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                Upload
-            </button>
-            <input type="file" id="p-up" hidden>
-            <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-                    <path fill="currentColor" d="M320 64C302.3 64 288 78.3 288 96L288 99.2C215 114 160 178.6 160 256L160 277.7C160 325.8 143.6 372.5 113.6 410.1L103.8 422.3C98.7 428.6 96 436.4 96 444.5C96 464.1 111.9 480 131.5 480L508.4 480C528 480 543.9 464.1 543.9 444.5C543.9 436.4 541.2 428.6 536.1 422.3L526.3 410.1C496.4 372.5 480 325.8 480 277.7L480 256C480 178.6 425 114 352 99.2L352 96C352 78.3 337.7 64 320 64zM258 528C265.1 555.6 290.2 576 320 576C349.8 576 374.9 555.6 382 528L258 528z"/>
-                </svg>
-            </a>
-            <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-                    <path fill="currentColor" d="M259.1 73.5C262.1 58.7 275.2 48 290.4 48L350.2 48C365.4 48 378.5 58.7 381.5 73.5L396 143.5C410.1 149.5 423.3 157.2 435.3 166.3L503.1 143.8C517.5 139 533.3 145 540.9 158.2L570.8 210C578.4 223.2 575.7 239.8 564.3 249.9L511 297.3C511.9 304.7 512.3 312.3 512.3 320C512.3 327.7 511.8 335.3 511 342.7L564.4 390.2C575.8 400.3 578.4 417 570.9 430.1L541 481.9C533.4 495 517.6 501.1 503.2 496.3L435.4 473.8C423.3 482.9 410.1 490.5 396.1 496.6L381.7 566.5C378.6 581.4 365.5 592 350.4 592L290.6 592C275.4 592 262.3 581.3 259.3 566.5L244.9 496.6C230.8 490.6 217.7 482.9 205.6 473.8L137.5 496.3C123.1 501.1 107.3 495.1 99.7 481.9L69.8 430.1C62.2 416.9 64.9 400.3 76.3 390.2L129.7 342.7C128.8 335.3 128.4 327.7 128.4 320C128.4 312.3 128.9 304.7 129.7 297.3L76.3 249.8C64.9 239.7 62.3 223 69.8 209.9L99.7 158.1C107.3 144.9 123.1 138.9 137.5 143.7L205.3 166.2C217.4 157.1 230.6 149.5 244.6 143.4L259.1 73.5zM320.3 400C364.5 399.8 400.2 363.9 400 319.7C399.8 275.5 363.9 239.8 319.7 240C275.5 240.2 239.8 276.1 240 320.3C240.2 364.5 276.1 400.2 320.3 400z"/>
-                </svg>
-            </a>
-            <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-                    <path fill="currentColor" d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z"/>
-                </svg>
-            </a>
-        </div>
-    </nav>
-
-    <div class="sub-nav-bar">
-        <a href="#region-section">REGION MAP</a>
-        <a href="#appointments-section">SCHEDULED APPOINTMENTS</a>
-        <a href="#reviews-section">REVIEWS</a>
-    </div>
-
     <div class="content-padding">
 
         <header class="page-header">
@@ -130,8 +174,8 @@
 
         <section class="metrics-grid">
             <div class="m-card">
-                <p>Total Revenue</p>
-                <h3><%= typeof metrics !== 'undefined' ? metrics.revenue : '$425,000' %></h3>
+                <p>Ongoing Orders</p>
+                <h3><%= typeof ongoingOrders !== 'undefined' ? ongoingOrders : '0' %></h3>
             </div>
             <div class="m-card">
                 <p>Scheduled Operations</p>
@@ -139,102 +183,9 @@
             </div>
             <div class="m-card">
                 <p>Active Nodes</p>
-                <h3><%= typeof metrics !== 'undefined' ? metrics.activeNodes : '10 / 10' %></h3>
+                <h3><%= (typeof appointments !== 'undefined' && appointments) ? appointments.length : 0 %> Nodes</h3>
             </div>
         </section>
-
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-        <style>
-            .dashboard-grid {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-                width: 100%;
-                font-family: 'Manrope', sans-serif;
-                margin-bottom: 40px;
-            }
-            @media (min-width: 992px) {
-                .dashboard-grid { flex-direction: row; }
-            }
-            .map-column {
-                flex: 100%; 
-                min-width: 0;
-                transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            }
-            .dashboard-grid.card-open .map-column {
-                @media (min-width: 992px) { flex: 2; }
-            }
-            .info-column {
-                flex: 0;
-                min-width: 0;
-                opacity: 0;
-                visibility: hidden;
-                transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease, visibility 0.4s ease;
-            }
-            .dashboard-grid.card-open .info-column {
-                opacity: 1;
-                visibility: visible;
-                @media (min-width: 992px) { flex: 1; min-width: 320px; }
-            }
-            #live-map {
-                height: 500px;
-                width: 100%;
-                border-radius: 24px;
-                box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
-                background: #0d1321;
-                z-index: 1;
-            }
-            .main-display-card {
-                background: #0d1321;
-                color: #edf2f4;
-                border-radius: 24px;
-                padding: 25px;
-                height: 100%;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                box-sizing: border-box;
-            }
-            .data-field {
-                margin-bottom: 15px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                padding-bottom: 10px;
-            }
-            .data-label {
-                display: block;
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                color: #ffb703;
-                margin-bottom: 4px;
-            }
-            .data-value { font-size: 0.95rem; font-weight: 600; }
-            .search-container { display: flex; gap: 12px; margin-bottom: 15px; }
-            .search-input {
-                width: 100%; background: white; border: 1px solid #eee;
-                padding: 15px 20px; border-radius: 12px; font-size: 0.9rem;
-                font-weight: 600; outline: none; color: #111;
-            }
-            .search-btn {
-                background: #ffb703; color: #0d1321; border: none;
-                padding: 0 25px; border-radius: 12px; font-weight: 700;
-                text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; cursor: pointer;
-            }
-            .search-error-msg { font-size: 0.85rem; font-weight: 700; color: #e63946; margin-bottom: 15px; display: none; }
-            .map-static-dot { box-shadow: 0 0 12px rgba(255, 183, 3, 0.8); }
-            .btn-action-cancel {
-                background: #e63946; color: white; border: none; padding: 6px 14px;
-                border-radius: 8px; font-family: 'Manrope', sans-serif; font-weight: 700;
-                font-size: 0.8rem; cursor: pointer; transition: background 0.2s ease;
-            }
-            .btn-action-cancel:hover { background: #b32430; }
-            .txt-cancelled-label { color: #a3a3a3; font-style: italic; font-weight: 600; }
-        </style>
-
-        <div class="search-container">
-            <input type="text" id="user-search-id" class="search-input" placeholder="Query Tracking Node Nodes: NODE-01 to NODE-10...">
-            <button id="search-submit-btn" onclick="locateSystemNode()" class="search-btn">Query ID</button>
-        </div>
-        <div id="search-error" class="search-error-msg">No systems match that tracking parameter ID.</div>
 
         <div class="dashboard-grid" id="main-dashboard-wrapper">
             <div class="map-column">
@@ -242,7 +193,6 @@
                     <div id="live-map"></div>
                 </section>
             </div>
-
             <div class="info-column">
                 <div class="main-display-card" id="main-page-data-card">
                     <div id="card-active-content">
@@ -266,42 +216,102 @@
                         <th>Target Date</th>
                         <th>Time Slot Block</th>
                         <th>Status</th>
-                        <th>Management Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% if (typeof appointments !== 'undefined' && appointments && appointments.length > 0) { %>
-                        <% appointments.forEach(app => { %>
+                        <% appointments.forEach(function(app) { %>
                             <tr>
                                 <td>
-                                    <strong><%= app.user ? app.user.name : 'Unknown User' %></strong><br>
-                                    <small style="color: #888;"><%= app.user ? app.user.email : '' %></small>
+                                    <strong><%= app.user ? app.user.name : app.fullName || 'Unknown User' %></strong><br>
+                                    <small style="color: #888;"><%= app.user ? app.user.email : app.email || '' %></small>
                                 </td>
                                 <td><%= new Date(app.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %></td>
                                 <td><span style="letter-spacing: 0.5px; font-weight:700;"><%= app.timeSlot %></span></td>
                                 <td>
-                                    <% if(app.status === 'confirmed' || app.status === 'approved') { %>
+                                    <% if (app.status === 'approved') { %>
                                         <span class="status-active">Approved</span>
-                                    <% } else if(app.status === 'cancelled') { %>
-                                        <span class="status-pending" style="background: rgba(230,57,70,0.15); color: #e63946;">Cancelled</span>
+                                    <% } else if (app.status === 'cancelled') { %>
+                                        <span class="status-rejected">Cancelled</span>
                                     <% } else { %>
                                         <span class="status-pending">Pending</span>
                                     <% } %>
                                 </td>
                                 <td>
                                     <% if (app.status !== 'cancelled') { %>
-                                        <form action="/appointments/<%= app._id %>/cancel" method="POST" style="margin:0;" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
-                                            <button type="submit" class="btn-action-cancel">Cancel Booking</button>
+                                        <form action="/appointments/<%= app._id %>/cancel" method="POST" style="margin:0;" onsubmit="return confirm('Cancel this appointment?');">
+                                            <button type="submit" class="btn-action-cancel">Cancel</button>
                                         </form>
                                     <% } else { %>
-                                        <span class="txt-cancelled-label">No Actions Available</span>
+                                        <span class="txt-cancelled-label">No Actions</span>
                                     <% } %>
                                 </td>
                             </tr>
                         <% }) %>
                     <% } else { %>
                         <tr>
-                            <td colspan="5" style="text-align: center; color: #aaa; padding: 30px;">No operational appointments have been logged inside the database grid yet.</td>
+                            <td colspan="5" style="text-align: center; color: #aaa; padding: 30px;">No appointments logged yet.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container" style="margin-bottom: 40px;">
+            <h3>Incoming Orders</h3>
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Delivery Address</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (typeof orders !== 'undefined' && orders && orders.length > 0) { %>
+                        <% orders.forEach(function(order) { %>
+                            <tr>
+                                <td>
+                                    <strong><%= order.user ? order.user.name : (order.shippingDetails ? order.shippingDetails.fullName : 'Unknown') %></strong><br>
+                                    <small style="color: #888;"><%= order.user ? order.user.email : (order.shippingDetails ? order.shippingDetails.email : '') %></small>
+                                </td>
+                                <td><%= order.shippingDetails ? order.shippingDetails.deliveryAddress : 'N/A' %></td>
+                                <td><strong>EGP <%= order.totalPrice ? order.totalPrice.toLocaleString() : '0' %></strong></td>
+                                <td>
+                                    <% if (order.status === 'approved') { %>
+                                        <span class="status-active">Approved</span>
+                                    <% } else if (order.status === 'rejected') { %>
+                                        <span class="status-rejected">Rejected</span>
+                                    <% } else { %>
+                                        <span class="status-pending">Pending</span>
+                                    <% } %>
+                                </td>
+                                <td><%= new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                <td>
+                                    <% if (order.status === 'pending') { %>
+                                        <div class="action-group">
+                                            <form action="/api/orders/<%= order._id %>/status?_method=PATCH" method="POST" style="margin:0;" onsubmit="return confirm('Approve this order?');">
+                                                <input type="hidden" name="status" value="approved">
+                                                <button type="submit" class="btn-action-approve">Approve</button>
+                                            </form>
+                                            <form action="/api/orders/<%= order._id %>/status?_method=PATCH" method="POST" style="margin:0;" onsubmit="return confirm('Reject this order?');">
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" class="btn-action-cancel">Reject</button>
+                                            </form>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="txt-cancelled-label">No Actions</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #aaa; padding: 30px;">No orders logged yet.</td>
                         </tr>
                     <% } %>
                 </tbody>
@@ -309,58 +319,37 @@
         </div>
 
         <div class="table-container">
-            <h3>Static Network Client Nodes</h3>
+            <h3>Recent Activity</h3>
             <table class="activity-table">
                 <thead>
                     <tr>
                         <th>Client Name</th>
-                        <th>Company</th>
-                        <th>Assigned Node</th>
+                        <th>Details</th>
+                        <th>Node</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Ahmed Mansour</td>
-                        <td>Delta Solar Solutions</td>
-                        <td>NODE-01</td>
-                        <td><span class="status-active">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td>Sarah Conners</td>
-                        <td>Apex Power Corp</td>
-                        <td>NODE-02</td>
-                        <td><span class="status-active">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td>Khaled Selim</td>
-                        <td>Cairo Grid Systems</td>
-                        <td>NODE-03</td>
-                        <td><span class="status-pending">Pending</span></td>
-                    </tr>
+                    <% if (typeof recentActivity !== 'undefined' && recentActivity && recentActivity.length > 0) { %>
+                        <% recentActivity.forEach(function(act) { %>
+                            <tr>
+                                <td><%= act.user %></td>
+                                <td><%= act.details %></td>
+                                <td>NODE-LOG</td>
+                                <td><span class="status-active"><%= act.type %></span></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #aaa; padding: 30px;">No recent activity</td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>
 
-        <section id="reviews-section" class="reviews-grid">
-            <div class="review-card">
-<div class="stars">★★★★★</div>                <p>Best solar ROI in Cairo.</p>
-                <strong>Ahmed M.</strong>
-            </div>
-            <div class="review-card">
-                <div class="stars">أ¢ع©â€¦أ¢ع©â€¦أ¢ع©â€¦أ¢ع©â€¦أ¢ع©â€¦</div>
-                <p>Seamless installation process.</p>
-                <strong>Sarah H.</strong>
-            </div>
-            <div class="review-card">
-                <div class="stars">أ¢ع©â€¦أ¢ع©â€¦أ¢ع©â€¦أ¢ع©â€¦أ¢ع©â€¦</div>
-                <p>World-class support.</p>
-                <strong>Khaled W.</strong>
-            </div>
-        </section>
-
         <footer class="sitefooter">
-            <p class="footer-left">AVALANCHE ط¢آ© 2026. EMPOWERING SUSTAINABLE GROWTH.</p>
+            <p class="footer-left">AVALANCHE &copy; 2026. EMPOWERING SUSTAINABLE GROWTH.</p>
             <div class="footer-right">
                 <p>SYSTEM STATUS: ONLINE</p>
                 <p>PRIVACY POLICY</p>
@@ -374,28 +363,26 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     const egyptBounds = L.latLngBounds(L.latLng(22.0, 24.8), L.latLng(31.6, 36.0));
-    const map = L.map('live-map', { 
-        maxBounds: egyptBounds,       
-        maxBoundsViscosity: 1.0,      
-        minZoom: 6,                 
+    const map = L.map('live-map', {
+        maxBounds: egyptBounds,
+        maxBoundsViscosity: 1.0,
+        minZoom: 6,
         maxZoom: 18
     }).setView([26.8206, 30.8025], 6.5);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: 'ط¢آ© OpenStreetMap contributors',
-        bounds: egyptBounds 
+        attribution: '&copy; OpenStreetMap contributors',
+        bounds: egyptBounds
     }).addTo(map);
 
-    let mapMarkers = {}; 
+    let mapMarkers = {};
 
     function openPanelAndDisplayData(user) {
         const wrapper = document.getElementById('main-dashboard-wrapper');
         wrapper.classList.add('card-open');
-        setTimeout(() => { map.invalidateSize({ animate: true }); }, 100);
-
+        setTimeout(function() { map.invalidateSize({ animate: true }); }, 100);
         const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
         const localizedDate = new Date(user.installDate).toLocaleDateString(undefined, dateOptions);
-
         document.getElementById('panel-name').textContent = user.name;
         document.getElementById('panel-name').style.color = '#ffb703';
         document.getElementById('panel-id').textContent = user._id;
@@ -405,78 +392,82 @@
         document.getElementById('panel-date').textContent = localizedDate;
     }
 
-    function openPanelWithNotFound() {
-        const wrapper = document.getElementById('main-dashboard-wrapper');
-        wrapper.classList.add('card-open');
-        setTimeout(() => { map.invalidateSize({ animate: true }); }, 100);
-
-        document.getElementById('panel-name').textContent = "Error: Not Found";
-        document.getElementById('panel-name').style.color = '#e63946'; 
-        document.getElementById('panel-id').textContent = "N/A";
-        document.getElementById('panel-phone').textContent = "N/A";
-        document.getElementById('panel-email').textContent = "N/A";
-        document.getElementById('panel-hardware').textContent = "N/A";
-        document.getElementById('panel-date').textContent = "N/A";
-    }
-
     function renderGlowingDot(user) {
         const marker = L.circleMarker([user.lat, user.lng], {
             radius: 9,
             color: '#ffb703',
             fillColor: '#ffb703',
             fillOpacity: 0.9,
-            className: 'map-static-dot' 
+            className: 'map-static-dot'
         }).addTo(map);
-
         marker.userDataPayload = user;
         marker.on('click', function() {
-            document.getElementById('search-error').style.display = "none";
             openPanelAndDisplayData(user);
             map.setView(marker.getLatLng(), 8, { animate: true, duration: 0.8 });
         });
-        mapMarkers[user._id] = marker; 
+        mapMarkers[user._id] = marker;
     }
 
-    function loadTenEgyptClients() {
-        const testClients = [
-            { _id: 'NODE-01', name: 'Youssef Mansour', lat: 30.0444, lng: 31.2357, phone: '+20 100 123 4567', email: 'youssef@avalanche.eg', orderType: 'Premium Silicon Array', installDate: '2026-01-15' },
-            { _id: 'NODE-02', name: 'Amira Hegazi', lat: 31.2001, lng: 29.9187, phone: '+20 111 234 5678', email: 'amira@avalanche.eg', orderType: 'Elite Smart Inverter Grid', installDate: '2026-02-20' },
-            { _id: 'NODE-03', name: 'Tarek El-Sayed', lat: 29.9765, lng: 31.1313, phone: '+20 122 345 6789', email: 'tarek@avalanche.eg', orderType: 'Standard PhotoVoltaic Kit', installDate: '2026-03-05' },
-            { _id: 'NODE-04', name: 'Fatma Zahran', lat: 25.6872, lng: 32.6396, phone: '+20 106 789 1234', email: 'fatma@avalanche.eg', orderType: 'Premium Silicon Array', installDate: '2026-03-12' },
-            { _id: 'NODE-05', name: 'Karim Masoud', lat: 24.0889, lng: 32.8998, phone: '+20 115 456 7890', email: 'karim@avalanche.eg', orderType: 'Elite Smart Inverter Grid', installDate: '2026-04-01' },
-            { _id: 'NODE-06', name: 'Nour El-Din', lat: 27.2579, lng: 33.8116, phone: '+20 128 901 2345', email: 'nour@avalanche.eg', orderType: 'Standard PhotoVoltaic Kit', installDate: '2026-04-18' },
-            { _id: 'NODE-07', name: 'Mahmoud Shaker', lat: 27.9158, lng: 34.3299, phone: '+20 109 321 6540', email: 'mahmoud@avalanche.eg', orderType: 'Premium Silicon Array', installDate: '2026-04-29' },
-            { _id: 'NODE-08', name: 'Layla Ghaffar', lat: 31.0409, lng: 31.3785, phone: '+20 114 876 5432', email: 'layla@avalanche.eg', orderType: 'Elite Smart Inverter Grid', installDate: '2026-05-10' },
-            { _id: 'NODE-09', name: 'Mostafa El-Feki', lat: 30.7865, lng: 31.0004, phone: '+20 120 543 2109', email: 'mostafa@avalanche.eg', orderType: 'Standard PhotoVoltaic Kit', installDate: '2026-05-15' },
-            { _id: 'NODE-10', name: 'Hana Selim', lat: 29.9668, lng: 32.5498, phone: '+20 102 987 6543', email: 'hana@avalanche.eg', orderType: 'Premium Silicon Array', installDate: '2026-05-24' }
-        ];
-        testClients.forEach(client => { renderGlowingDot(client); });
-    }
+    function loadLiveDatabaseClients() {
+        const liveAppointments = <%- typeof appointments !== 'undefined' ? JSON.stringify(appointments) : '[]' %>;
+        const liveOrders = <%- typeof orders !== 'undefined' ? JSON.stringify(orders) : '[]' %>;
 
-    loadTenEgyptClients();
+        const locationCoords = {
+            'cairo':      { lat: 30.0444, lng: 31.2357 },
+            'alexandria': { lat: 31.2001, lng: 29.9187 },
+            'giza':       { lat: 29.9765, lng: 31.1313 },
+            'luxor':      { lat: 25.6872, lng: 32.6396 },
+            'aswan':      { lat: 24.0889, lng: 32.8998 },
+            'hurghada':   { lat: 27.2579, lng: 33.8116 },
+            'sharm':      { lat: 27.9158, lng: 34.3299 },
+            'mansoura':   { lat: 31.0409, lng: 31.3785 },
+            'tanta':      { lat: 30.7865, lng: 31.0004 },
+            'suez':       { lat: 29.9668, lng: 32.5498 }
+        };
 
-    function locateSystemNode() {
-        const queryId = document.getElementById('user-search-id').value.trim();
-        const errorElement = document.getElementById('search-error');
-        if(!queryId) return;
-
-        if (mapMarkers[queryId]) {
-            errorElement.style.display = "none";
-            const targetMarker = mapMarkers[queryId];
-            openPanelAndDisplayData(targetMarker.userDataPayload);
-            map.setView(targetMarker.getLatLng(), 9, { animate: true, duration: 1.0 });
-        } else {
-            errorElement.style.display = "block";
-            openPanelWithNotFound();
+        function getCoordsFromAddress(address) {
+            const rawLocation = (address || 'cairo').toLowerCase().trim();
+            let matchedCity = 'cairo';
+            Object.keys(locationCoords).forEach(function(city) {
+                if (rawLocation.includes(city)) matchedCity = city;
+            });
+            return {
+                lat: locationCoords[matchedCity].lat + (Math.random() - 0.5) * 0.04,
+                lng: locationCoords[matchedCity].lng + (Math.random() - 0.5) * 0.04
+            };
         }
+
+        liveAppointments.forEach(function(app) {
+            if (app.status === 'cancelled') return;
+            const coords = getCoordsFromAddress(app.address || app.location);
+            renderGlowingDot({
+                _id: app._id,
+                name: app.fullName || (app.user && app.user.name) || 'Client',
+                lat: coords.lat, lng: coords.lng,
+                phone: app.phone || 'Not Provided',
+                email: app.email || (app.user && app.user.email) || 'Not Provided',
+                orderType: 'Appointment: ' + app.timeSlot,
+                installDate: app.date
+            });
+        });
+
+        liveOrders.forEach(function(order) {
+            if (order.status === 'rejected') return;
+            const address = order.shippingDetails ? order.shippingDetails.deliveryAddress : null;
+            const coords = getCoordsFromAddress(address || 'cairo');
+            renderGlowingDot({
+                _id: order._id,
+                name: order.user ? order.user.name : (order.shippingDetails ? order.shippingDetails.fullName : 'Order Client'),
+                lat: coords.lat, lng: coords.lng,
+                phone: order.user ? order.user.phone : (order.shippingDetails ? order.shippingDetails.phone : 'Not Provided'),
+                email: order.user ? order.user.email : (order.shippingDetails ? order.shippingDetails.email : 'Not Provided'),
+                orderType: 'Order: EGP ' + (order.totalPrice || 0),
+                installDate: order.createdAt
+            });
+        });
     }
 
-    document.getElementById('user-search-id').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault(); 
-            locateSystemNode();     
-        }
-    });
+    loadLiveDatabaseClients();
 </script>
 <script src="/js/dashb.js"></script>
 </body>

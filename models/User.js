@@ -92,17 +92,12 @@ const userSchema = new mongoose.Schema(
 );
 
 //pre save abl ma y3ml save lel user, hash the password using bcrypt
-userSchema.pre('save', async function (next) { 
-    if (!this.isModified('password')) { // checks if the password field has been modified
-        return next(); // if not, move to the next middleware
-    }
+userSchema.pre('save', async function () { 
+    if (!this.isModified('password')) return; 
 
-    //salt = ensures the hashing is different each time even for the same password
-     const salt = await bcrypt.genSalt(10); // generates a salt with a cost factor of 10 (higher cost,higher security but slower hashing)
-     this.password = await bcrypt.hash(this.password, salt);// hashes the password using the generated salt and updates the password field with the hashed value
-    next();
-    }
-);
+     const salt = await bcrypt.genSalt(10); 
+     this.password = await bcrypt.hash(this.password, salt);
+});
 
 //method to compare the entered password with the hashed password in the database
 userSchema.methods.comparePassword = async function (enteredPassword) { // takes the entered password as an argument

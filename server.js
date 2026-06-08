@@ -9,6 +9,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+const methodOverride = require('method-override');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 

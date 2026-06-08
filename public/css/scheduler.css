@@ -1,4 +1,3 @@
-
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -73,13 +72,12 @@
     border-radius: 2px;
 }
 
-
 .step-content { transition: all 0.4s ease; }
 .hidden-step  { display: none; }
 
-
+/* Theme Color Customization */
 .calendar-panel {
-    background: #E5E2D1;
+    background: #d8e6f3;
     padding: 50px;
     border-radius: 40px;
     max-width: 780px;
@@ -113,7 +111,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: none;
+    cursor: pointer;
     transition: 0.2s;
 }
 .cal-nav-btn:hover { background: rgba(13,19,33,0.08); }
@@ -149,7 +147,7 @@
     font-weight: 800;
     font-size: 1rem;
     border-radius: 14px;
-    cursor: none;
+    cursor: pointer;
     transition: 0.25s;
     color: var(--primary);
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
@@ -180,14 +178,13 @@
     font-weight: 900;
     font-size: 1rem;
     letter-spacing: 1px;
-    cursor: none;
+    cursor: pointer;
     transition: 0.3s;
 }
 .confirm-btn:hover {
     background: var(--accent);
     transform: translateY(-2px);
 }
-
 
 .step2-grid {
     display: grid;
@@ -226,6 +223,11 @@
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-bottom: 20px;
+}
+
+/* Modification for single-column full width rows if needed */
+.form-row.full-width {
+    grid-template-columns: 1fr;
 }
 
 .form-field {
@@ -304,7 +306,7 @@
     font-family: var(--font-main);
     font-weight: 900;
     color: var(--primary);
-    cursor: none;
+    cursor: pointer;
     transition: 0.2s;
 }
 .reset-btn:hover { background: #e8e8e8; }
@@ -328,7 +330,7 @@
     border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 .summary-row p { font-size: 0.85rem; opacity: 0.5; }
-.summary-row strong { font-weight: 800; font-size: 0.9rem; }
+.summary-row strong { font-weight: 800; font-size: 0.9rem; word-break: break-word; text-align: right; max-width: 60%; }
 
 .summary-divider {
     border: none;
@@ -355,7 +357,7 @@
     font-family: var(--font-main);
     font-weight: 800;
     font-size: 0.85rem;
-    cursor: none;
+    cursor: pointer;
     transition: 0.2s;
 }
 .back-btn:hover { background: rgba(255,255,255,0.12); }
@@ -398,10 +400,9 @@ aside.admin-sidebar.collapsed {
 .toggle-row h2 {
     background: linear-gradient(45deg, #3e5c76, #748cab, #edf2f4);
     -webkit-background-clip: text;
-    background-clip: text;                  /* Added standard property for forward compatibility */
-    -webkit-text-fill-color: transparent;   /* Fix: Makes text clear so gradient shows through on WebKit */
-    color: transparent;                     /* Fix: Fallback for standard browsers */
-    
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
     filter: drop-shadow(0px 2px 4px var(--primary));
     font-size: 25px;
     white-space: nowrap;
@@ -427,6 +428,7 @@ aside.admin-sidebar.collapsed {
     height: 30px;
     padding: 0;
     color: var(--textlight);
+    cursor: pointer;
 }
 
 aside.admin-sidebar ul {
@@ -449,7 +451,7 @@ aside.admin-sidebar ul {
     padding: 0 8px;
     border-radius: 8px;
     transition: all 0.3s ease;
-    cursor: none;
+    cursor: pointer;
 }
 
 .side-btn-text {
